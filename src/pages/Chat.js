@@ -27,6 +27,7 @@ const [disputeReason, setDisputeReason] = useState('');
   const commission = actualPrice ? Math.round(parseFloat(actualPrice) * 0.15) : 0;
   const total = actualPrice ? parseFloat(actualPrice) + commission : 0;
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     fetchRequest();
     fetchMessages();

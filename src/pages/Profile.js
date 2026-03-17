@@ -11,7 +11,7 @@ export default function Profile({ user, onUpdate }) {
   const [saving, setSaving] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+// eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
   fetchStats();
 }, []);

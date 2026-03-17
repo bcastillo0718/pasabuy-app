@@ -10,7 +10,7 @@ export default function MyRequests({ user }) {
   const [pasabuyerRequests, setPasabuyerRequests] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+// eslint-disable-next-line react-hooks/exhaustive-deps
  useEffect(() => {
   fetchAll();
 }, []);
