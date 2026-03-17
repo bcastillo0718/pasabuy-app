@@ -19,20 +19,18 @@ export default function EntryDetail({ user }) {
   const isBuyer = entry?.buyer_id === user.id;
   const hasRequested = requests.some(r => r.pasabuyer_id === user.id);
 
- // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    fetchEntry();
-    fetchRequests();
-
-    const channel = supabase
-      .channel('entry-detail')
-      .on('postgres_changes', {
-        event: '*', schema: 'public', table: 'requests'
-      }, () => fetchRequests())
-      .subscribe();
-
-    return () => supabase.removeChannel(channel);
-  }, [id]);
+// eslint-disable-next-line react-hooks/exhaustive-deps
+useEffect(() => {
+  fetchEntry();
+  fetchRequests();
+  const channel = supabase
+    .channel('entry-detail')
+    .on('postgres_changes', {
+      event: '*', schema: 'public', table: 'requests'
+    }, () => fetchRequests())
+    .subscribe();
+  return () => supabase.removeChannel(channel);
+}, [id]);
 
   const fetchEntry = async () => {
     const { data } = await supabase

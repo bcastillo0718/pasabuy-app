@@ -13,8 +13,8 @@ export default function Profile({ user, onUpdate }) {
 
 // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-  fetchStats();
-}, []);
+    fetchStats();
+  }, []);
 
   const fetchStats = async () => {
     const [buyerRes, pasabuyerRes] = await Promise.all([
