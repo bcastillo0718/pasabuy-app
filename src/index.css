@@ -34,9 +34,12 @@ html { scroll-behavior: smooth; }
 
 body {
   font-family: 'Outfit', sans-serif;
-  background: var(--bg);
+  background: #6B0000;
   min-height: 100vh;
   color: var(--text);
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
 }
 
 button {
