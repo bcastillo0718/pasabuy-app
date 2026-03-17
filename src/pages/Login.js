@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { supabase } from '../lib/supabase';
 
 import logoIcon from '../logo-icon.png';
-import logoFull from '../logo.png';
+
 
 export default function Login() {
   const [loading, setLoading] = useState(false);

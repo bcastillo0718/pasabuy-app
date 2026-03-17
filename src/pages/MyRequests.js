@@ -10,9 +10,10 @@ export default function MyRequests({ user }) {
   const [pasabuyerRequests, setPasabuyerRequests] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchAll();
-  }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+ useEffect(() => {
+  fetchAll();
+}, []);
 
   const fetchAll = async () => {
     const [buyerRes, pasabuyerRes] = await Promise.all([

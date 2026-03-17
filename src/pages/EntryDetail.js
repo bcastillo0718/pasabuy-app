@@ -19,6 +19,7 @@ export default function EntryDetail({ user }) {
   const isBuyer = entry?.buyer_id === user.id;
   const hasRequested = requests.some(r => r.pasabuyer_id === user.id);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     fetchEntry();
     fetchRequests();
