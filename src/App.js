@@ -5,7 +5,7 @@ import { supabase } from './lib/supabase';
 // Pages
 import Login from './pages/Login';
 import ProfileSetup from './pages/ProfileSetup';
-import Membership from './pages/Membership';
+
 import Home from './pages/Home';
 import PostEntry from './pages/PostEntry';
 import EntryDetail from './pages/EntryDetail';
