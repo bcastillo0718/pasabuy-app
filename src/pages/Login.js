@@ -70,7 +70,7 @@ export default function Login() {
           fontWeight: '800',
           marginBottom: '8px',
           letterSpacing: '-0.5px'
-        }}>PasaBuy</h1>
+        }}>PasaBuy App</h1>
 
         <p className="fade-up-2" style={{
           color: 'rgba(255,255,255,0.55)',
@@ -79,7 +79,7 @@ export default function Login() {
           lineHeight: '1.7',
           maxWidth: '200px',
           marginBottom: '32px'
-        }}>Campus errand sharing made easy 🎓</p>
+        }}>Turn every errand into earnings 💸</p>
 
         {/* Feature chips */}
         <div className="fade-up-3" style={{
@@ -126,7 +126,7 @@ export default function Login() {
           color: 'var(--text-soft)',
           fontSize: '13px', marginBottom: '24px',
           lineHeight: '1.6'
-        }}>Sign in to start buying and earning on campus</p>
+        }}>Sign in to start accepting and earning through PasaBuy</p>
 
         {/* Google button */}
         <button
@@ -180,7 +180,7 @@ export default function Login() {
             fontSize: '12px', color: '#78350F',
             lineHeight: '1.6', fontWeight: '500'
           }}>
-            Connect, help & earn with your fellow students on campus!
+            Connect, help & let's earn together!
           </p>
         </div>
 
