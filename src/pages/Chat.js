@@ -270,7 +270,7 @@ const handleSubmitRating = async () => {
     comment: ratingComment.trim() || null
   });
 
-  console.log('Rating insert result:', { data, error });
+
 
   // Update user's average rating
   const { data: allRatings } = await supabase
