@@ -80,7 +80,7 @@ const [submittingRating, setSubmittingRating] = useState(false);
   };
 
 const checkIfRated = async () => {
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from('ratings')
       .select('id')
       .eq('request_id', requestId)
