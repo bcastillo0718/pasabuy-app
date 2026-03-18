@@ -43,10 +43,10 @@ const fields = [
     {
       icon: <MapPin size={16} strokeWidth={2}/>,
       label: 'Where are you going?',
-      placeholder: 'e.g. 7/11 Katipunan, Jollibee SM North',
+      placeholder: 'e.g. 7/11 Grove, McDo Vega',
       value: location,
       onChange: setLocation,
-      hint: "Be specific so pasabuyers know where you're headed"
+      hint: "Be specific as you can so pasabuyers know where you're going"
     },
     {
       icon: <ShoppingBag size={16} strokeWidth={2}/>,
@@ -121,7 +121,7 @@ const fields = [
               fontFamily: 'Raleway, sans-serif',
               color: 'var(--yellow)',
               fontSize: '17px', fontWeight: '800'
-            }}>PasaBuy</span>
+            }}>PasaBuy App</span>
           </div>
         </div>
 
@@ -140,7 +140,7 @@ const fields = [
         <p style={{
           color: 'rgba(255,255,255,0.5)',
           fontSize: '13px', marginTop: '6px'
-        }}>Let others know where you're headed</p>
+        }}>Let others know where you're going</p>
       </div>
 
       {/* White card */}
@@ -180,11 +180,11 @@ const fields = [
             <p style={{
               color: 'white', fontSize: '13px',
               fontWeight: '700', marginBottom: '2px'
-            }}>Earn while you're out!</p>
+            }}>Earn while you're going out!</p>
             <p style={{
               color: 'rgba(255,255,255,0.7)',
               fontSize: '12px', lineHeight: '1.5'
-            }}>You earn 15% commission on every accepted pasabuy request</p>
+            }}>You will earn 15% commission on every accepted pasabuy request</p>
           </div>
         </div>
 
@@ -253,7 +253,7 @@ const fields = [
     letterSpacing: '1px',
     marginBottom: '8px'
   }}>
-    ⏱️ How long will you be out?
+    ⏱️ How long will you be accepting pasabuy requests?
   </label>
   <div style={{
     display: 'grid',
@@ -320,7 +320,7 @@ const fields = [
             lineHeight: '1.6', fontWeight: '500'
           }}>
             Only post an entry if you're <strong>actually going out</strong>.
-            Once you accept a request, you are responsible for buying and delivering the item.
+            Once you accept a request, you are responsible for buying and bringing the item to the pasabuyer.
           </p>
         </div>
 
