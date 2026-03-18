@@ -133,11 +133,11 @@ export default function Leaderboard({ user }) {
           fontFamily: 'Raleway, sans-serif',
           color: 'white', fontSize: '26px',
           fontWeight: '800', letterSpacing: '-0.3px'
-        }}>Leaderboard 📊</h1>
+        }}>Leaderboard </h1>
         <p style={{
           color: 'rgba(255,255,255,0.5)',
           fontSize: '13px', marginTop: '4px'
-        }}>Top performers on campus</p>
+        }}>Top Earners & Pasabuyers in Pasabuy App</p>
       </div>
 
       {/* White card */}

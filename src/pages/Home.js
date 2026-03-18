@@ -271,7 +271,7 @@ const [loading, setLoading] = useState(true);
                 color: '#D97706',
                 display: 'flex', alignItems: 'center', gap: '4px'
               }}
-            >📊 Top</button>
+            >📊 Top Users</button>
             <span style={{
               background: entries.length > 0 ? '#FEF3F2' : '#F5F5F5',
               color: entries.length > 0 ? 'var(--maroon)' : 'var(--text-soft)',
