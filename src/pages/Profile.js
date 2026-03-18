@@ -430,8 +430,9 @@ export default function Profile({ user, onUpdate }) {
         {/* Nav buttons */}
         {[
           { icon: '🏠', label: 'Browse Active Entries', path: '/' },
-          { icon: '📋', label: 'Check My Requests', path: '/my-requests' }
-          { icon: '❓', label: 'FAQs', path: '/faq' }
+          { icon: '📋', label: 'Check My Requests', path: '/my-requests' },
+          { icon: '❓', label: 'FAQs', path: '/faq' },
+          { icon: '🎧', label: 'Support', path: '/support' }
         ].map((btn, i) => (
           <button
             key={i}

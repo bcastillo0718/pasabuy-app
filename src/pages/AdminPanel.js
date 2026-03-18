@@ -9,6 +9,11 @@ export default function AdminPanel({ user }) {
   const [requests, setRequests] = useState([]);
   const [entries, setEntries] = useState([]);
   const [disputes, setDisputes] = useState([]);
+  const [supportUsers, setSupportUsers] = useState([]);
+  const [activeSupport, setActiveSupport] = useState(null);
+  const [supportMessages, setSupportMessages] = useState([]);
+  const [adminReply, setAdminReply] = useState('');
+  const [sendingReply, setSendingReply] = useState(false);
   const [loading, setLoading] = useState(true);
   const [disputeNote, setDisputeNote] = useState({});
 
@@ -18,22 +23,38 @@ export default function AdminPanel({ user }) {
 
   const fetchAll = async () => {
     setLoading(true);
-    const [usersRes, requestsRes, entriesRes, disputesRes] = await Promise.all([
+    const [usersRes, requestsRes, entriesRes, disputesRes, supportRes] = await Promise.all([
       supabase.from('users').select('*').order('created_at', { ascending: false }),
       supabase.from('requests').select('*, entries(location, buyer_id, users(name, photo_url, phone)), pasabuyer:users!requests_pasabuyer_id_fkey(name, phone, photo_url)').order('created_at', { ascending: false }),
       supabase.from('entries').select('*, users(name, photo_url)').order('created_at', { ascending: false }),
-      supabase.from('disputes').select('*, raised_by_user:users!disputes_raised_by_fkey(name, photo_url), requests(item_name, total_amount, entries(location))').order('created_at', { ascending: false })
+      supabase.from('disputes').select('*, raised_by_user:users!disputes_raised_by_fkey(name, photo_url), requests(item_name, total_amount, entries(location))').order('created_at', { ascending: false }),
+      supabase.from('support_messages').select('*, users(name, photo_url)').order('created_at', { ascending: false })
     ]);
 
     const allUsers = usersRes.data || [];
     const allRequests = requestsRes.data || [];
     const allEntries = entriesRes.data || [];
     const allDisputes = disputesRes.data || [];
+    const allSupport = supportRes.data || [];
 
     setUsers(allUsers);
     setRequests(allRequests);
     setEntries(allEntries);
     setDisputes(allDisputes);
+
+    // Group support messages by user
+    const userMap = {};
+    allSupport.forEach(msg => {
+      if (!userMap[msg.user_id]) {
+        userMap[msg.user_id] = {
+          user: msg.users,
+          userId: msg.user_id,
+          lastMessage: msg,
+          unread: msg.sender === 'user'
+        };
+      }
+    });
+    setSupportUsers(Object.values(userMap));
 
     setStats({
       totalUsers: allUsers.length,
@@ -67,6 +88,30 @@ const handleMarkCompleted = async (requestId) => {
 
   fetchAll();
 };
+
+const fetchSupportMessages = async (userId) => {
+    const { data } = await supabase
+      .from('support_messages')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: true });
+    setSupportMessages(data || []);
+  };
+
+  const handleSendReply = async (userId) => {
+    if (!adminReply.trim()) return;
+    setSendingReply(true);
+
+    await supabase.from('support_messages').insert({
+      user_id: userId,
+      sender: 'admin',
+      message: adminReply.trim()
+    });
+
+    setAdminReply('');
+    fetchSupportMessages(userId);
+    setSendingReply(false);
+  };
   const handleReleasePayment = async (requestId) => {
     await supabase.from('requests').update({
       payment_released: true,
@@ -169,6 +214,7 @@ const handleMarkCompleted = async (requestId) => {
     { key: 'dashboard', label: '📊 Dashboard' },
     { key: 'proofs', label: `📦 Proofs${stats.pendingProofReview > 0 ? ` (${stats.pendingProofReview})` : ''}` },
     { key: 'disputes', label: `🚨 Disputes${stats.openDisputes > 0 ? ` (${stats.openDisputes})` : ''}` },
+    { key: 'support', label: '🎧 Support' },
     { key: 'users', label: '👥 Users' },
     { key: 'requests', label: '📋 Requests' },
     { key: 'entries', label: '🏃 Entries' },
@@ -624,6 +670,169 @@ const handleMarkCompleted = async (requestId) => {
                 )}
               </div>
             ))}
+          </div>
+        )}
+
+        {/* SUPPORT TAB */}
+        {activeTab === 'support' && (
+          <div style={{ display: 'flex', gap: '20px', height: '70vh' }}>
+            {/* User list */}
+            <div style={{ width: '200px', flexShrink: 0, overflowY: 'auto' }}>
+              <h2 style={{
+                fontFamily: 'Raleway, sans-serif',
+                fontSize: '16px', fontWeight: '800',
+                color: 'var(--text)', marginBottom: '14px'
+              }}>Conversations</h2>
+
+              {supportUsers.length === 0 && (
+                <div style={{
+                  textAlign: 'center', padding: '24px',
+                  background: 'white', borderRadius: '16px',
+                  border: '1px dashed #EDE5E5'
+                }}>
+                  <p style={{ fontSize: '24px', marginBottom: '8px' }}>🎧</p>
+                  <p style={{ fontSize: '12px', color: '#888' }}>No conversations yet</p>
+                </div>
+              )}
+
+              {supportUsers.map(su => (
+                <div
+                  key={su.userId}
+                  onClick={() => {
+                    setActiveSupport(su.userId);
+                    fetchSupportMessages(su.userId);
+                  }}
+                  style={{
+                    background: activeSupport === su.userId ? '#FFF0F0' : 'white',
+                    border: `1px solid ${activeSupport === su.userId ? '#FECACA' : '#F0E8E8'}`,
+                    borderRadius: '14px', padding: '12px',
+                    marginBottom: '8px', cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', gap: '10px'
+                  }}
+                >
+                  <img src={su.user?.photo_url} alt=""
+                    style={{
+                      width: '36px', height: '36px',
+                      borderRadius: '50%', border: '1.5px solid #EDE5E5',
+                      flexShrink: 0
+                    }}
+                  />
+                  <div style={{ minWidth: 0 }}>
+                    <p style={{
+                      fontSize: '12px', fontWeight: '700',
+                      color: 'var(--text)',
+                      whiteSpace: 'nowrap', overflow: 'hidden',
+                      textOverflow: 'ellipsis'
+                    }}>{su.user?.name}</p>
+                    <p style={{
+                      fontSize: '11px', color: '#888',
+                      whiteSpace: 'nowrap', overflow: 'hidden',
+                      textOverflow: 'ellipsis'
+                    }}>{su.lastMessage?.message || '📎 Photo'}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Chat area */}
+            <div style={{
+              flex: 1, background: 'white',
+              borderRadius: '16px', border: '1px solid #F0E8E8',
+              display: 'flex', flexDirection: 'column',
+              overflow: 'hidden'
+            }}>
+              {!activeSupport ? (
+                <div style={{
+                  flex: 1, display: 'flex',
+                  alignItems: 'center', justifyContent: 'center',
+                  color: '#B0A0A0', fontSize: '14px'
+                }}>
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{ fontSize: '40px', marginBottom: '12px' }}>🎧</div>
+                    <p>Select a conversation to view</p>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div style={{
+                    flex: 1, overflowY: 'auto',
+                    padding: '16px', display: 'flex',
+                    flexDirection: 'column', gap: '8px'
+                  }}>
+                    {supportMessages.map(msg => {
+                      const isAdmin = msg.sender === 'admin';
+                      return (
+                        <div key={msg.id} style={{
+                          display: 'flex',
+                          justifyContent: isAdmin ? 'flex-end' : 'flex-start'
+                        }}>
+                          {msg.photo_url ? (
+                            <img src={msg.photo_url} alt="attachment"
+                              style={{
+                                maxWidth: '200px', borderRadius: '12px',
+                                border: '1px solid #EDE5E5'
+                              }}
+                            />
+                          ) : (
+                            <div style={{
+                              maxWidth: '70%',
+                              background: isAdmin ? 'var(--maroon)' : '#F0EBEB',
+                              color: isAdmin ? 'white' : 'var(--text)',
+                              padding: '9px 13px',
+                              borderRadius: isAdmin
+                                ? '16px 16px 4px 16px'
+                                : '16px 16px 16px 4px',
+                              fontSize: '13px', lineHeight: '1.5'
+                            }}>
+                              <p>{msg.message}</p>
+                              <p style={{
+                                fontSize: '10px', opacity: 0.6,
+                                marginTop: '3px', textAlign: 'right'
+                              }}>{new Date(msg.created_at).toLocaleTimeString('en-PH', {
+                                hour: '2-digit', minute: '2-digit'
+                              })}</p>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <div style={{
+                    padding: '12px 16px',
+                    borderTop: '1px solid #F0E8E8',
+                    display: 'flex', gap: '8px'
+                  }}>
+                    <input
+                      type="text"
+                      placeholder="Type a reply..."
+                      value={adminReply}
+                      onChange={e => setAdminReply(e.target.value)}
+                      onKeyDown={e => {
+                        if (e.key === 'Enter') handleSendReply(activeSupport);
+                      }}
+                      style={{
+                        flex: 1, padding: '10px 14px',
+                        borderRadius: '100px',
+                        border: '1.5px solid #EDE5E5',
+                        fontSize: '13px', background: '#FAFAFA'
+                      }}
+                    />
+                    <button
+                      onClick={() => handleSendReply(activeSupport)}
+                      disabled={!adminReply.trim() || sendingReply}
+                      style={{
+                        padding: '10px 20px',
+                        borderRadius: '100px',
+                        background: adminReply.trim() ? 'var(--maroon)' : '#F0E8E8',
+                        color: adminReply.trim() ? 'white' : '#C0A8A8',
+                        fontSize: '13px', fontWeight: '700'
+                      }}
+                    >Send</button>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         )}
 

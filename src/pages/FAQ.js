@@ -7,9 +7,9 @@ const faqs = [
   {
     category: 'General',
     items: [
-      { q: 'What is PasaBuy?', a: 'PasaBuy is a campus errand-sharing app that connects students who are going out with those who need something bought. Buyers earn commission by purchasing items for others while they\'re already out.' },
-      { q: 'Who can use PasaBuy?', a: 'PasaBuy is designed for students on campus. Anyone with a Google account can sign up and start using the app immediately.' },
-      { q: 'Is PasaBuy free to use?', a: 'Yes! PasaBuy is completely free to use. The only cost involved is the 15% commission added on top of the item price, which goes directly to the buyer as their earning.' },
+      { q: 'What is PasaBuy App?', a: 'PasaBuy App is an errand-sharing app that connects users who are going out with those who need something bought. Buyers earn commission by purchasing items for others while they\'re already out.' },
+      { q: 'Who can use the PasaBuy App?', a: 'PasaBuy App is designed for users who want to buy something through pasabuys. Anyone with a Google account can sign up and start using the app immediately.' },
+      { q: 'Is PasaBuy App free to use?', a: 'Yes! Currently, PasaBuy App is free to use during the trial run, Membership fees will start to be charged after this period . During the trial period, the only cost involved is the 15% commission added on top of the item price, which goes directly to the buyer as their earning.' },
     ]
   },
   {
@@ -39,7 +39,7 @@ const faqs = [
       { q: 'How does payment work?', a: 'Once the buyer sets the price, you\'ll receive the total amount to pay in the chat. Send the exact amount via GCash to the number provided, then upload your receipt for verification.' },
       { q: 'What GCash number do I send payment to?', a: 'The GCash number will be provided in the payment request message inside the chat. Make sure to send to the exact number shown.' },
       { q: 'What happens after I send payment?', a: 'Upload your GCash receipt in the chat. Once your payment is verified, the buyer will be notified to purchase and deliver your item.' },
-      { q: 'How is my payment kept safe?', a: 'PasaBuy uses an escrow-based payment system to ensure the safety of all transactions. This means that your payment is held and verified by the admin before it is released to the buyer. This ensures that the buyer only receives payment after successfully delivering your item, protecting both parties from fraud or disputes.' },
+      { q: 'How is my payment kept safe?', a: 'PasaBuy App uses an escrow-based payment system to ensure the safety of all transactions. This means that your payment is held and verified by the admin before it is released to the buyer. This ensures that the buyer only receives payment after successfully delivering your item, protecting both parties from fraud or disputes.' },
     ]
   },
   {
@@ -91,7 +91,7 @@ const faqs = [
     items: [
       { q: 'How long can an entry stay active?', a: 'You can set your entry to be active for 30 minutes, 1 hour, 2 hours, or 3 hours when posting.' },
       { q: 'What happens to my pending requests if an entry expires?', a: 'Pending requests that haven\'t been accepted will no longer be actionable. Already accepted requests and their chats remain accessible.' },
-      { q: 'Can the buyer extend their entry time?', a: 'Currently entries cannot be extended once posted. You can end your current entry and post a new one with a longer duration.' },
+      { q: 'Can the buyer extend their entry time?', a: 'Currently, entries cannot be extended once posted. You can end your current entry and post a new one with a longer duration.' },
     ]
   },
   {
@@ -118,9 +118,9 @@ const faqs = [
   {
     category: 'Campus Specific',
     items: [
-      { q: 'Is PasaBuy only for students?', a: 'PasaBuy is designed primarily for campus use but anyone with a Google account can sign up and use the app.' },
-      { q: 'What areas or locations are covered?', a: 'PasaBuy can be used anywhere! Buyers can post entries for any location they\'re heading to.' },
-      { q: 'Can I use PasaBuy off campus?', a: 'Yes! While PasaBuy is designed with campus life in mind, you can use it anywhere as long as there are active entries in your area.' },
+      { q: 'Is PasaBuy App only for students?', a: 'PasaBuy App was initially designed primarily for campus use but anyone with a Google account can sign up and use the app.' },
+      { q: 'What areas or locations are covered?', a: 'PasaBuy App can be used anywhere! Buyers can post entries for any location they\'re heading to.' },
+      { q: 'Can I use PasaBuy App off campus?', a: 'Yes! While PasaBuy App was designed with campus life in mind, you can use it anywhere as long as there are active entries in your area.' },
     ]
   },
 ];
@@ -179,7 +179,7 @@ export default function FAQ({ user }) {
             <span style={{
               fontFamily: 'Raleway, sans-serif',
               color: 'var(--yellow)', fontSize: '17px', fontWeight: '800'
-            }}>PasaBuy</span>
+            }}>PasaBuy App</span>
           </div>
         </div>
 

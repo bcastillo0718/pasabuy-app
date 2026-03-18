@@ -17,6 +17,7 @@ import Profile from './pages/Profile';
 import AdminPanel from './pages/AdminPanel';
 import Leaderboard from './pages/Leaderboard';
 import FAQ from './pages/FAQ';
+import Support from './pages/Support';
 
 const ADMIN_EMAIL = 'bucastillo@up.edu.ph'; // 🔴 CHANGE THIS TO YOUR EMAIL
 
@@ -171,6 +172,7 @@ if (loading) return (
             />
             <Route path="/leaderboard" element={<Leaderboard user={user} />} />
             <Route path="/faq" element={<FAQ user={user} />} />
+            <Route path="/support" element={<Support user={user} />} />
             <Route path="*" element={<Navigate to="/" />} />
             
           </>
