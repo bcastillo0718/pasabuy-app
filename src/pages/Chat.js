@@ -654,6 +654,38 @@ await supabase.from('ratings').insert({
           )}
         </div>
 
+          {/* Quick replies */}
+        {request?.status !== 'completed' && request?.status !== 'disputed' && (
+          <div style={{
+            padding: '0 14px 8px',
+            display: 'flex', gap: '6px',
+            overflowX: 'auto', flexShrink: 0
+          }}>
+            {[
+              "I'm on my way! 🏃",
+              "Almost there! ⏱️",
+              "I'm here! 📍",
+              "Got your item! ✅",
+              "Please wait a moment 🙏"
+            ].map((reply, i) => (
+              <button
+                key={i}
+                onClick={() => setNewMessage(reply)}
+                style={{
+                  background: '#F5F0F0',
+                  color: 'var(--text)',
+                  padding: '6px 12px',
+                  borderRadius: '100px',
+                  fontSize: '12px', fontWeight: '600',
+                  whiteSpace: 'nowrap',
+                  border: '1px solid #EDE5E5',
+                  flexShrink: 0
+                }}
+              >{reply}</button>
+            ))}
+          </div>
+        )}
+
         {/* Message input */}
         {request?.status !== 'completed' && request?.status !== 'disputed' && (
           <div style={{
