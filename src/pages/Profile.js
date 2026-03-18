@@ -429,8 +429,8 @@ export default function Profile({ user, onUpdate }) {
 
         {/* Nav buttons */}
         {[
-          { icon: '🏠', label: 'Go to Home Feed', path: '/' },
-          { icon: '📋', label: 'My Requests', path: '/my-requests' }
+          { icon: '🏠', label: 'Browse Active Entries', path: '/' },
+          { icon: '📋', label: 'Check My Requests', path: '/my-requests' }
         ].map((btn, i) => (
           <button
             key={i}
