@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { useNavigate, useParams } from 'react-router-dom';
 import logoIcon from '../logo-icon.png';
-import { MapPin, ShoppingBag, ArrowLeft } from 'lucide-react';
+import { MapPin, ShoppingBag } from 'lucide-react';
 
 export default function EntryDetail({ user }) {
   const { id } = useParams();
