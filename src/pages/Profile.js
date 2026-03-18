@@ -12,6 +12,7 @@ export default function Profile({ user, onUpdate }) {
   const [phone, setPhone] = useState(user.phone || '');
   const [saving, setSaving] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [badges, setBadges] = useState([]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
@@ -50,6 +51,23 @@ export default function Profile({ user, onUpdate }) {
       completed,
       earnings: totalEarnings
     });
+
+    // Calculate badges
+    const earnedBadges = [];
+
+    if (completed >= 1) earnedBadges.push({ id: 'first_pasabuy', icon: '🌟', label: 'First Pasabuy', desc: 'Completed first transaction' });
+    if (completed >= 5) earnedBadges.push({ id: 'on_a_roll', icon: '🔥', label: 'On a Roll', desc: 'Completed 5 transactions' });
+    if (completed >= 10) earnedBadges.push({ id: 'top_pasabuyer', icon: '💎', label: 'Top Pasabuyer', desc: 'Completed 10 transactions' });
+    if (user.avg_rating >= 4.5 && user.total_ratings >= 3) earnedBadges.push({ id: 'highly_rated', icon: '⭐', label: 'Highly Rated', desc: 'Average rating of 4.5+' });
+    if (buyerRequests.length >= 5) earnedBadges.push({ id: 'active_buyer', icon: '🏃', label: 'Active Buyer', desc: 'Posted 5 entries' });
+    if (totalEarnings >= 500) earnedBadges.push({ id: 'big_earner', icon: '💸', label: 'Big Earner', desc: 'Earned ₱500+ in commissions' });
+
+    // Save badges to database
+    await supabase.from('users').update({
+      badges: earnedBadges.map(b => b.id)
+    }).eq('id', user.id);
+
+    setBadges(earnedBadges);
   };
 
   const handleSavePhone = async () => {
@@ -222,6 +240,50 @@ export default function Profile({ user, onUpdate }) {
             </div>
           ))}
         </div>
+
+        {/* Badges */}
+        {badges.length > 0 && (
+          <div style={{
+            background: '#FAFAFA',
+            borderRadius: '16px',
+            padding: '14px 16px',
+            marginBottom: '10px',
+            border: '1px solid #F0E8E8'
+          }}>
+            <p style={{
+              fontSize: '10px', color: '#B0A0A0',
+              fontWeight: '700', textTransform: 'uppercase',
+              letterSpacing: '0.7px', marginBottom: '12px'
+            }}>🏆 Achievements</p>
+            <div style={{
+              display: 'flex', flexWrap: 'wrap', gap: '8px'
+            }}>
+              {badges.map((badge, i) => (
+                <div key={i} style={{
+                  background: 'white',
+                  border: '1px solid #F0E8E8',
+                  borderRadius: '12px',
+                  padding: '8px 12px',
+                  display: 'flex', alignItems: 'center',
+                  gap: '6px',
+                  boxShadow: '0 1px 4px rgba(0,0,0,0.04)'
+                }}>
+                  <span style={{ fontSize: '18px' }}>{badge.icon}</span>
+                  <div>
+                    <p style={{
+                      fontSize: '11px', fontWeight: '700',
+                      color: 'var(--text)'
+                    }}>{badge.label}</p>
+                    <p style={{
+                      fontSize: '10px', color: '#B0A0A0',
+                      marginTop: '1px'
+                    }}>{badge.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}  
 
         {/* GCash Number */}
         <div style={{
