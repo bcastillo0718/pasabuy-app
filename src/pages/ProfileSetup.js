@@ -95,7 +95,7 @@ export default function ProfileSetup({ session, onComplete }) {
             fontFamily: 'Raleway, sans-serif',
             color: 'var(--yellow)',
             fontSize: '18px', fontWeight: '800'
-          }}>PasaBuy</span>
+          }}>PasaBuy App</span>
         </div>
 
         {/* Step indicator */}

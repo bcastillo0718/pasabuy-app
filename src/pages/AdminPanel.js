@@ -195,7 +195,7 @@ const handleMarkCompleted = async (requestId) => {
             <p style={{
               fontFamily: 'Raleway, sans-serif',
               color: 'var(--yellow)', fontSize: '18px', fontWeight: '800'
-            }}>PasaBuy</p>
+            }}>PasaBuy App</p>
             <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '11px', marginTop: '-2px' }}>
               Admin Panel
             </p>

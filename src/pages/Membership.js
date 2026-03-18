@@ -58,7 +58,7 @@ export default function Membership({ user, onActivated }) {
         fontSize: '32px',
         fontWeight: '800',
         marginBottom: '32px'
-      }}>PasaBuy</h1>
+      }}>PasaBuy App</h1>
 
       <div style={{
         background: 'white',
@@ -376,7 +376,7 @@ export default function Membership({ user, onActivated }) {
         fontSize: '32px',
         fontWeight: '800',
         marginBottom: '32px'
-      }}>PasaBuy</h1>
+      }}>PasaBuy App</h1>
 
       <div style={{
         background: 'white',

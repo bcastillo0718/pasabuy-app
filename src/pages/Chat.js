@@ -296,7 +296,7 @@ await supabase.from('ratings').insert({
     await supabase.from('messages').insert({
       request_id: requestId,
       sender_id: user.id,
-      text: `🎉 Order completed! Pasabuyer confirmed receipt. Thank you for using PasaBuy!`
+      text: `🎉 Order completed! Pasabuyer confirmed receipt of items. Thank you for using PasaBuy App!`
     });
     fetchRequest();
   };
