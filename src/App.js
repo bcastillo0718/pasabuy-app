@@ -123,12 +123,12 @@ if (loading) return (
         fontSize: '20px', fontWeight: '800',
         letterSpacing: '-0.3px',
         animation: 'pulse 1.8s ease-in-out infinite'
-      }}>PasaBuy</p>
+      }}>PasaBuy App</p>
       <p style={{
         color: 'rgba(255,255,255,0.4)',
         fontSize: '12px', marginTop: '4px',
         fontWeight: '500'
-      }}>Campus errands made easy</p>
+      }}>Turn every errand into earnings 💸</p>
     </div>
   </div>
 );
