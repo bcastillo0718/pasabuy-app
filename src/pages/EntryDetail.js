@@ -199,7 +199,7 @@ export default function EntryDetail({ user }) {
             <span style={{
               fontFamily: 'Raleway, sans-serif',
               color: 'var(--yellow)', fontSize: '17px', fontWeight: '800'
-            }}>PasaBuy</span>
+            }}>PasaBuy App</span>
           </div>
         </div>
 
@@ -323,7 +323,7 @@ export default function EntryDetail({ user }) {
               fontSize: '13px', fontWeight: '700',
               marginBottom: '16px'
             }}
-          >🏁 End My Run</button>
+          > End My Run</button>
         )}
 
         {/* Pasabuyer: Request button */}
