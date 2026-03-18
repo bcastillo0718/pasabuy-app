@@ -188,7 +188,7 @@ export default function Login() {
           color: '#C0B4B4', fontSize: '11px',
           textAlign: 'center',
           letterSpacing: '0.2px'
-        }}>© 2025 PasaBuy · Campus Errands Made Easy 💚</p>
+        }}>© 2026 PasaBuy App · Turn every errand into earnings 💸</p>
       </div>
     </div>
   );
