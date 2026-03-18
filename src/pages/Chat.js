@@ -124,7 +124,7 @@ const checkIfRated = async () => {
     await supabase.from('messages').insert({
       request_id: requestId,
       sender_id: user.id,
-      text: `💳 PAYMENT REQUEST\nItem: ₱${parseFloat(actualPrice).toFixed(2)}\nCommission (15%): ₱${commission.toFixed(2)}\nTotal: ₱${total.toFixed(2)}\n\nPlease send ₱${total.toFixed(2)} to GCash 09065935527 then upload your receipt below.`
+      text: `💳 PAYMENT REQUEST\nItem: ₱${parseFloat(actualPrice).toFixed(2)}\nCommission (15%): ₱${commission.toFixed(2)}\nTotal: ₱${total.toFixed(2)}\n\nPlease send ₱${total.toFixed(2)} to this GCash number: 09065935527 then upload your receipt below. Double check the amount and number before sending.`
     });
 
     setShowPriceModal(false);
@@ -176,12 +176,12 @@ const checkIfRated = async () => {
         ocrNormalized.includes(expectedWhole);
 
       if (!hasGcashNumber) {
-        setOcrError('❌ GCash number not found in receipt. Make sure you sent to 09065935527.');
+        setOcrError('❌ Wrong Receipt. Please make sure that you have sent the payment to the correct GCash number.');
         setUploadingReceipt(false);
         return;
       }
       if (!hasAmount) {
-        setOcrError(`❌ Payment amount not verified. Expected ₱${expectedAmount}. Please check your receipt.`);
+        setOcrError(`❌ Invalid Amount. Expected ₱${expectedAmount}. Please send the correct amount.`);
         setUploadingReceipt(false);
         return;
       }
