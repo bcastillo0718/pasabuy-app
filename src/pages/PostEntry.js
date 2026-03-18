@@ -9,10 +9,11 @@ export default function PostEntry({ user }) {
   const [whatCanBuy, setWhatCanBuy] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [expiresAt, setExpiresAt] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async () => {
-    if (!location || !whatCanBuy) {
+    if (!location || !whatCanBuy || !expiresAt) {
       setError('Please fill in all fields');
       return;
     }
@@ -25,7 +26,8 @@ export default function PostEntry({ user }) {
         buyer_id: user.id,
         location,
         what_can_buy: whatCanBuy,
-        status: 'active'
+        status: 'active',
+        expires_at: expiresAt || null
       });
 
     if (error) {
@@ -56,7 +58,7 @@ const fields = [
     },
   ];
 
-  const isValid = location && whatCanBuy;
+  const isValid = location && whatCanBuy && expiresAt;
 
   return (
     <div style={{
@@ -238,6 +240,58 @@ const fields = [
             }}>{field.hint}</p>
           </div>
         ))}
+
+{/* Expiry time */}
+        <div style={{ marginBottom: '20px' }}>
+          <label style={{
+            display: 'flex', alignItems: 'center',
+            gap: '6px',
+            fontSize: '11px', fontWeight: '700',
+            color: 'var(--text-soft)',
+            textTransform: 'uppercase',
+            letterSpacing: '1px',
+            marginBottom: '8px'
+          }}>
+            <span style={{ color: 'var(--maroon)', display: 'flex', alignItems: 'center' }}>
+              ⏱️
+            </span>
+            Accepting requests until
+          </label>
+          <input
+            type="time"
+            value={expiresAt}
+            onChange={e => {
+              const today = new Date().toISOString().split('T')[0];
+              setExpiresAt(`${today}T${e.target.value}:00`);
+            }}
+            style={{
+              width: '100%',
+              padding: '13px 16px',
+              borderRadius: '13px',
+              border: '1.5px solid #EDE5E5',
+              fontSize: '14px',
+              fontWeight: '500',
+              color: 'var(--text)',
+              background: '#FAFAFA',
+              transition: 'all 0.2s ease'
+            }}
+            onFocus={e => {
+              e.target.style.borderColor = 'var(--maroon)';
+              e.target.style.background = 'white';
+              e.target.style.boxShadow = '0 0 0 3px rgba(139,0,0,0.06)';
+            }}
+            onBlur={e => {
+              e.target.style.borderColor = '#EDE5E5';
+              e.target.style.background = '#FAFAFA';
+              e.target.style.boxShadow = 'none';
+            }}
+          />
+          <p style={{
+            fontSize: '11px', color: '#B0A0A0',
+            marginTop: '5px', paddingLeft: '2px',
+            lineHeight: '1.5'
+          }}>Entry will automatically end at this time</p>
+        </div>
 
         {/* Error */}
         {error && (

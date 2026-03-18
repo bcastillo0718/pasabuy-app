@@ -33,6 +33,24 @@ const [loading, setLoading] = useState(true);
     setLoading(false);
   };
 
+  useEffect(() => {
+    const checkExpiry = async () => {
+      const now = new Date().toISOString();
+      await supabase
+        .from('entries')
+        .update({ status: 'ended' })
+        .eq('status', 'active')
+        .lt('expires_at', now)
+        .not('expires_at', 'is', null);
+      fetchEntries();
+    };
+
+    checkExpiry();
+    const interval = setInterval(checkExpiry, 60000);
+    return () => clearInterval(interval);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const formatTime = (ts) => {
     const diff = Math.floor((new Date() - new Date(ts)) / 60000);
     if (diff < 1) return 'Just now';
@@ -373,14 +391,22 @@ const [loading, setLoading] = useState(true);
                   )}
                 </div>
               </div>
-              <span style={{
-                background: '#F0FDF4',
-                color: '#16A34A',
-                border: '1px solid #BBF7D0',
-                borderRadius: '100px',
-                padding: '3px 10px',
-                fontSize: '11px', fontWeight: '700'
-              }}>● Active</span>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '3px' }}>
+                <span style={{
+                  background: '#F0FDF4',
+                  color: '#16A34A',
+                  border: '1px solid #BBF7D0',
+                  borderRadius: '100px',
+                  padding: '3px 10px',
+                  fontSize: '11px', fontWeight: '700'
+                }}>● Active</span>
+                {entry.expires_at && (
+                  <span style={{
+                    fontSize: '10px', color: '#D97706',
+                    fontWeight: '600'
+                  }}>⏱️ Until {new Date(entry.expires_at).toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' })}</span>
+                )}
+              </div>
             </div>
 
             {/* Details */}
