@@ -16,6 +16,7 @@ import Chat from './pages/Chat';
 import Profile from './pages/Profile';
 import AdminPanel from './pages/AdminPanel';
 import Leaderboard from './pages/Leaderboard';
+import FAQ from './pages/FAQ';
 
 const ADMIN_EMAIL = 'bucastillo@up.edu.ph'; // 🔴 CHANGE THIS TO YOUR EMAIL
 
@@ -169,6 +170,7 @@ if (loading) return (
               />}
             />
             <Route path="/leaderboard" element={<Leaderboard user={user} />} />
+            <Route path="/faq" element={<FAQ user={user} />} />
             <Route path="*" element={<Navigate to="/" />} />
             
           </>

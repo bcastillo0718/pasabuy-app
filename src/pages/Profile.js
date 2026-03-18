@@ -431,6 +431,7 @@ export default function Profile({ user, onUpdate }) {
         {[
           { icon: '🏠', label: 'Browse Active Entries', path: '/' },
           { icon: '📋', label: 'Check My Requests', path: '/my-requests' }
+          { icon: '❓', label: 'FAQs', path: '/faq' }
         ].map((btn, i) => (
           <button
             key={i}
