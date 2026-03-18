@@ -3,11 +3,12 @@ import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
 import logoIcon from '../logo-icon.png';
 
-import { Home as HomeIcon, ClipboardList, User, MapPin, ShoppingBag } from 'lucide-react';
+import { Home as HomeIcon, ClipboardList, User, MapPin, ShoppingBag, Search } from 'lucide-react';
 
 export default function Home({ user }) {
   const [entries, setEntries] = useState([]);
-  const [loading, setLoading] = useState(true);
+const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
   const navigate = useNavigate();
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -39,6 +40,12 @@ export default function Home({ user }) {
     if (diff < 1440) return `${Math.floor(diff / 60)}h ago`;
     return `${Math.floor(diff / 1440)}d ago`;
   };
+
+ const filteredEntries = entries.filter(entry =>
+    entry.location?.toLowerCase().includes(search.toLowerCase()) ||
+    entry.what_can_buy?.toLowerCase().includes(search.toLowerCase()) ||
+    entry.users?.name?.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <div style={{
@@ -171,12 +178,55 @@ export default function Home({ user }) {
         padding: '20px 20px 100px',
         boxShadow: '0 -8px 48px rgba(0,0,0,0.18)'
       }}>
-        {/* Handle */}
+       {/* Handle */}
         <div style={{
           width: '32px', height: '4px',
           background: '#EDE5E5', borderRadius: '4px',
           margin: '0 auto 20px'
         }}/>
+
+        {/* Search bar */}
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: '10px',
+          background: '#F5F0F0', borderRadius: '14px',
+          padding: '10px 14px', marginBottom: '16px',
+          border: '1.5px solid transparent',
+          transition: 'all 0.2s ease'
+        }}
+          onFocusCapture={e => {
+            e.currentTarget.style.borderColor = 'var(--maroon)';
+            e.currentTarget.style.background = 'white';
+          }}
+          onBlurCapture={e => {
+            e.currentTarget.style.borderColor = 'transparent';
+            e.currentTarget.style.background = '#F5F0F0';
+          }}
+        >
+          <Search size={16} strokeWidth={2} color='var(--text-soft)'/>
+          <input
+            type="text"
+            placeholder="Search by location, item or name..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            style={{
+              flex: 1, background: 'transparent',
+              fontSize: '13px', fontWeight: '500',
+              color: 'var(--text)'
+            }}
+          />
+          {search && (
+            <button
+              onClick={() => setSearch('')}
+              style={{
+                background: '#EDE5E5', color: '#888',
+                width: '18px', height: '18px',
+                borderRadius: '50%', fontSize: '10px',
+                display: 'flex', alignItems: 'center',
+                justifyContent: 'center', flexShrink: 0
+              }}
+            >✕</button>
+          )}
+        </div>
 
         {/* Section header */}
         <div style={{
@@ -244,8 +294,25 @@ export default function Home({ user }) {
           </div>
         )}
 
-        {/* Entry cards */}
-        {entries.map((entry, idx) => (
+       {/* Entry cards */}
+        {filteredEntries.length === 0 && !loading && search && (
+          <div style={{
+            textAlign: 'center', padding: '40px 24px',
+            background: '#FFF8F8', borderRadius: '20px',
+            border: '1px dashed #FECACA'
+          }}>
+            <div style={{ fontSize: '40px', marginBottom: '12px' }}>🔍</div>
+            <p style={{
+              fontFamily: 'Raleway, sans-serif',
+              fontSize: '16px', fontWeight: '800',
+              color: 'var(--text)', marginBottom: '6px'
+            }}>No results found</p>
+            <p style={{
+              color: 'var(--text-soft)', fontSize: '13px'
+            }}>Try searching for a different location or item</p>
+          </div>
+        )}
+        {filteredEntries.map((entry, idx) => (
           <div
             key={entry.id}
             onClick={() => navigate(`/entry/${entry.id}`)}
