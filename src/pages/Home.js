@@ -111,7 +111,7 @@ const [loading, setLoading] = useState(true);
               fontFamily: 'Raleway, sans-serif',
               color: 'var(--yellow)',
               fontSize: '17px', fontWeight: '800'
-            }}>PasaBuy</span>
+            }}>PasaBuy App</span>
           </div>
 
           <img
