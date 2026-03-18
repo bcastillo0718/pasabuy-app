@@ -259,14 +259,28 @@ const [loading, setLoading] = useState(true);
             color: 'var(--text)',
             letterSpacing: '-0.2px'
           }}>Active Entries</h2>
-          <span style={{
-            background: entries.length > 0 ? '#FEF3F2' : '#F5F5F5',
-            color: entries.length > 0 ? 'var(--maroon)' : 'var(--text-soft)',
-            border: `1px solid ${entries.length > 0 ? '#FECACA' : '#E5E5E5'}`,
-            borderRadius: '100px',
-            padding: '3px 10px',
-            fontSize: '11px', fontWeight: '700'
-          }}>{entries.length} active</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <button
+              onClick={() => navigate('/leaderboard')}
+              style={{
+                background: '#FFF8E8',
+                border: '1px solid #FDE68A',
+                borderRadius: '100px',
+                padding: '4px 12px',
+                fontSize: '11px', fontWeight: '700',
+                color: '#D97706',
+                display: 'flex', alignItems: 'center', gap: '4px'
+              }}
+            >📊 Top</button>
+            <span style={{
+              background: entries.length > 0 ? '#FEF3F2' : '#F5F5F5',
+              color: entries.length > 0 ? 'var(--maroon)' : 'var(--text-soft)',
+              border: `1px solid ${entries.length > 0 ? '#FECACA' : '#E5E5E5'}`,
+              borderRadius: '100px',
+              padding: '3px 10px',
+              fontSize: '11px', fontWeight: '700'
+            }}>{entries.length} active</span>
+          </div>
         </div>
 
         {/* Loading skeleton */}
