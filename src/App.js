@@ -16,7 +16,7 @@ import Chat from './pages/Chat';
 import Profile from './pages/Profile';
 import AdminPanel from './pages/AdminPanel';
 
-const ADMIN_EMAIL = 'automathic.apparel@gmail.com'; // 🔴 CHANGE THIS TO YOUR EMAIL
+const ADMIN_EMAIL = 'bucastillo@up.edu.ph'; // 🔴 CHANGE THIS TO YOUR EMAIL
 
 function App() {
   const [session, setSession] = useState(null);
