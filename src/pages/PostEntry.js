@@ -320,7 +320,7 @@ const fields = [
             lineHeight: '1.6', fontWeight: '500'
           }}>
             Only post an entry if you're <strong>actually going out</strong>.
-            Once you accept a request, you are responsible for buying and bringing the item to the pasabuyer.
+            Once you accept a request, you are responsible for buying and bringing the item to the pasabuyer.<strong>Account suspension</strong> might be given to those who will abuse the platform by posting fake entries or accepting requests without fulfilling them.
           </p>
         </div>
 
