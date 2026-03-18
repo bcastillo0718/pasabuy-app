@@ -470,7 +470,9 @@ const [loading, setLoading] = useState(true);
                 color: 'var(--maroon)',
                 fontSize: '12px', fontWeight: '700',
                 display: 'flex', alignItems: 'center', gap: '4px'
-              }}>Request a Pasabuy →</span>
+              }}>
+                {entry.buyer_id === user.id ? 'Check Requests →' : 'Request a Pasabuy →'}
+              </span>
             </div>
           </div>
         ))}
