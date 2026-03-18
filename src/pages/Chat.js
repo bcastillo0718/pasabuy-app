@@ -79,14 +79,13 @@ const [submittingRating, setSubmittingRating] = useState(false);
     checkIfRated();
   };
 
-  const checkIfRated = async () => {
-    const { data } = await supabase
+const checkIfRated = async () => {
+    const { data, error } = await supabase
       .from('ratings')
       .select('id')
       .eq('request_id', requestId)
-      .eq('rater_id', user.id)
-      .single();
-    setHasRated(!!data);
+      .eq('rater_id', user.id);
+    setHasRated(data && data.length > 0);
   };
 
   const fetchMessages = async () => {
@@ -253,7 +252,7 @@ const [submittingRating, setSubmittingRating] = useState(false);
     fetchRequest();
   };
 
-  const handleSubmitRating = async () => {
+const handleSubmitRating = async () => {
   if (rating === 0) return;
   setSubmittingRating(true);
 
@@ -261,13 +260,17 @@ const [submittingRating, setSubmittingRating] = useState(false);
     ? request?.pasabuyer_id
     : entry?.buyer_id;
 
-  await supabase.from('ratings').insert({
+  console.log('Submitting rating:', { requestId, raterId: user.id, ratedId, rating });
+
+  const { data, error } = await supabase.from('ratings').insert({
     request_id: requestId,
     rater_id: user.id,
     rated_id: ratedId,
     rating,
     comment: ratingComment.trim() || null
   });
+
+  console.log('Rating insert result:', { data, error });
 
   // Update user's average rating
   const { data: allRatings } = await supabase
