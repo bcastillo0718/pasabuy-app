@@ -70,25 +70,35 @@ export default function MyRequests({ user }) {
           pointerEvents: 'none'
         }}/>
 
+        {/* Brand */}
         <div style={{
           display: 'flex', alignItems: 'center',
-          gap: '10px', marginBottom: '20px'
+          gap: '8px', marginBottom: '20px'
         }}>
-          <img src={logoIcon} alt="PasaBuy"
-            style={{ width: '32px', height: '32px', borderRadius: '10px' }}/>
+          <div style={{
+            width: '32px', height: '32px',
+            background: 'var(--yellow)',
+            borderRadius: '10px',
+            display: 'flex', alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <img src={logoIcon} alt="PasaBuy"
+              style={{ width: '24px', height: '24px', borderRadius: '6px' }}/>
+          </div>
           <span style={{
             fontFamily: 'Raleway, sans-serif',
-            color: 'var(--yellow)', fontSize: '18px', fontWeight: '800'
+            color: 'var(--yellow)', fontSize: '17px', fontWeight: '800'
           }}>PasaBuy</span>
         </div>
 
         <h1 style={{
           fontFamily: 'Raleway, sans-serif',
-          color: 'white', fontSize: '28px',
-          fontWeight: '800', lineHeight: '1.2'
+          color: 'white', fontSize: '26px',
+          fontWeight: '800', lineHeight: '1.2',
+          letterSpacing: '-0.3px'
         }}>My Requests 📋</h1>
         <p style={{
-          color: 'rgba(255,255,255,0.55)',
+          color: 'rgba(255,255,255,0.5)',
           fontSize: '13px', marginTop: '4px'
         }}>Track all your pasabuy activity</p>
       </div>
@@ -97,21 +107,21 @@ export default function MyRequests({ user }) {
       <div style={{
         flex: 1, background: 'white',
         borderRadius: '32px 32px 0 0',
-        padding: '24px 20px 100px',
-        boxShadow: '0 -4px 48px rgba(0,0,0,0.2)'
+        padding: '20px 20px 100px',
+        boxShadow: '0 -8px 48px rgba(0,0,0,0.18)'
       }}>
         {/* Handle */}
         <div style={{
-          width: '36px', height: '4px',
+          width: '32px', height: '4px',
           background: '#EDE5E5', borderRadius: '4px',
           margin: '0 auto 20px'
         }}/>
 
         {/* Tabs */}
         <div style={{
-          display: 'flex', gap: '8px',
-          background: '#F8F4F4',
-          borderRadius: '16px', padding: '4px',
+          display: 'flex', gap: '6px',
+          background: '#F5F0F0',
+          borderRadius: '14px', padding: '4px',
           marginBottom: '20px'
         }}>
           {[
@@ -122,50 +132,61 @@ export default function MyRequests({ user }) {
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
               style={{
-                flex: 1, padding: '10px',
-                borderRadius: '12px',
+                flex: 1, padding: '9px 8px',
+                borderRadius: '11px',
                 background: activeTab === tab.key ? 'white' : 'transparent',
-                color: activeTab === tab.key ? 'var(--maroon)' : '#888',
-                fontSize: '13px', fontWeight: '700',
-                boxShadow: activeTab === tab.key ? '0 2px 8px rgba(0,0,0,0.08)' : 'none',
-                transition: 'all 0.2s ease',
+                color: activeTab === tab.key ? 'var(--maroon)' : '#AAA',
+                fontSize: '12px', fontWeight: '700',
+                boxShadow: activeTab === tab.key
+                  ? '0 1px 6px rgba(0,0,0,0.08)' : 'none',
+                transition: 'all 0.18s ease',
                 display: 'flex', alignItems: 'center',
                 justifyContent: 'center', gap: '6px'
               }}
             >
               {tab.label}
               <span style={{
-                background: activeTab === tab.key ? 'var(--maroon)' : '#E0D8D8',
-                color: activeTab === tab.key ? 'white' : '#888',
+                background: activeTab === tab.key ? 'var(--maroon)' : '#DDD',
+                color: activeTab === tab.key ? 'white' : '#999',
                 borderRadius: '100px',
-                padding: '1px 7px',
-                fontSize: '11px', fontWeight: '700'
+                padding: '1px 6px',
+                fontSize: '10px', fontWeight: '700'
               }}>{tab.count}</span>
             </button>
           ))}
         </div>
 
         {/* Loading */}
-        {loading && (
-          <div style={{
-            textAlign: 'center', padding: '40px',
-            color: '#B0A0A0', fontSize: '14px'
-          }}>Loading...</div>
-        )}
+        {loading && [1, 2, 3].map(i => (
+          <div key={i} style={{
+            background: '#F8F4F4',
+            borderRadius: '16px',
+            height: '120px',
+            marginBottom: '12px',
+            overflow: 'hidden',
+            position: 'relative'
+          }}>
+            <div style={{
+              position: 'absolute', inset: 0,
+              background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.7) 50%, transparent 100%)',
+              animation: 'shimmer 1.5s infinite'
+            }}/>
+          </div>
+        ))}
 
         {/* Empty state */}
         {!loading && requests.length === 0 && (
           <div style={{
-            textAlign: 'center', padding: '52px 24px',
-            background: '#FFF8F8', borderRadius: '24px',
-            border: '1.5px dashed #FECACA'
+            textAlign: 'center', padding: '48px 24px',
+            background: '#FFF8F8', borderRadius: '20px',
+            border: '1px dashed #FECACA'
           }}>
-            <div style={{ fontSize: '48px', marginBottom: '12px' }}>
+            <div style={{ fontSize: '44px', marginBottom: '12px' }}>
               {activeTab === 'pasabuyer' ? '🛍️' : '🏃'}
             </div>
             <h3 style={{
               fontFamily: 'Raleway, sans-serif',
-              fontSize: '17px', fontWeight: '800',
+              fontSize: '16px', fontWeight: '800',
               color: 'var(--text)', marginBottom: '8px'
             }}>No requests yet</h3>
             <p style={{
@@ -178,8 +199,8 @@ export default function MyRequests({ user }) {
             <button
               onClick={() => navigate('/')}
               style={{
-                marginTop: '16px', padding: '12px 24px',
-                borderRadius: '12px', background: 'var(--maroon)',
+                marginTop: '16px', padding: '11px 24px',
+                borderRadius: '11px', background: 'var(--maroon)',
                 color: 'white', fontSize: '13px', fontWeight: '700',
                 boxShadow: 'var(--shadow-maroon)'
               }}
@@ -197,10 +218,10 @@ export default function MyRequests({ user }) {
 
           return (
             <div key={req.id} style={{
-              background: 'white', borderRadius: '20px',
-              padding: '16px', marginBottom: '12px',
-              border: '1.5px solid #F0E8E8',
-              boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
+              background: 'white', borderRadius: '18px',
+              padding: '14px', marginBottom: '10px',
+              border: '1px solid #F0E8E8',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
               animation: `fadeUp 0.4s ease ${idx * 0.05}s both`
             }}>
               {/* Top row */}
@@ -214,9 +235,9 @@ export default function MyRequests({ user }) {
                     : req.pasabuyer?.photo_url}
                   alt=""
                   style={{
-                    width: '40px', height: '40px',
+                    width: '38px', height: '38px',
                     borderRadius: '50%',
-                    border: '2px solid #EDE5E5'
+                    border: '1.5px solid #EDE5E5'
                   }}
                 />
                 <div style={{ flex: 1 }}>
@@ -235,31 +256,30 @@ export default function MyRequests({ user }) {
                 <span style={{
                   background: statusStyle.bg,
                   color: statusStyle.color,
-                  border: `1.5px solid ${statusStyle.border}`,
+                  border: `1px solid ${statusStyle.border}`,
                   borderRadius: '100px',
-                  padding: '4px 10px',
+                  padding: '3px 9px',
                   fontSize: '11px', fontWeight: '700'
                 }}>{statusStyle.label}</span>
               </div>
 
               {/* Details */}
               <div style={{
-                background: '#FAFAFA', borderRadius: '12px',
-                padding: '12px', marginBottom: '12px'
+                background: '#FAFAFA', borderRadius: '11px',
+                padding: '11px 12px', marginBottom: '12px'
               }}>
                 <p style={{
-                  fontSize: '14px', fontWeight: '700',
+                  fontSize: '13px', fontWeight: '700',
                   color: 'var(--text)', marginBottom: '6px'
                 }}>🛍️ {req.item_name}</p>
                 <div style={{
-                  display: 'flex', gap: '16px',
-                  flexWrap: 'wrap'
+                  display: 'flex', gap: '16px', flexWrap: 'wrap'
                 }}>
                   <div>
                     <p style={{
                       fontSize: '10px', color: '#B0A0A0',
                       fontWeight: '700', textTransform: 'uppercase',
-                      letterSpacing: '0.5px'
+                      letterSpacing: '0.5px', marginBottom: '2px'
                     }}>Location</p>
                     <p style={{
                       fontSize: '12px', fontWeight: '600',
@@ -271,7 +291,7 @@ export default function MyRequests({ user }) {
                       <p style={{
                         fontSize: '10px', color: '#B0A0A0',
                         fontWeight: '700', textTransform: 'uppercase',
-                        letterSpacing: '0.5px'
+                        letterSpacing: '0.5px', marginBottom: '2px'
                       }}>Total</p>
                       <p style={{
                         fontSize: '12px', fontWeight: '700',
@@ -287,8 +307,8 @@ export default function MyRequests({ user }) {
                 <button
                   onClick={() => navigate(`/chat/${req.id}`)}
                   style={{
-                    width: '100%', padding: '11px',
-                    borderRadius: '12px',
+                    width: '100%', padding: '10px',
+                    borderRadius: '11px',
                     background: req.status === 'completed'
                       ? '#F8F4F4' : 'var(--maroon)',
                     color: req.status === 'completed' ? '#888' : 'white',
@@ -313,7 +333,7 @@ export default function MyRequests({ user }) {
         background: 'white', borderTop: '1px solid #F0E8E8',
         display: 'flex', justifyContent: 'space-around',
         padding: '10px 0 20px', zIndex: 100,
-        boxShadow: '0 -4px 24px rgba(0,0,0,0.08)'
+        boxShadow: '0 -4px 24px rgba(0,0,0,0.06)'
       }}>
         {[
           { icon: '🏠', label: 'Home', path: '/' },
@@ -331,7 +351,7 @@ export default function MyRequests({ user }) {
                 gap: '3px', padding: '6px 20px', borderRadius: '12px'
               }}
             >
-              <span style={{ fontSize: '22px' }}>{item.icon}</span>
+              <span style={{ fontSize: '20px' }}>{item.icon}</span>
               <span style={{
                 fontSize: '10px', fontWeight: '700',
                 color: active ? 'var(--maroon)' : '#C0B0B0',

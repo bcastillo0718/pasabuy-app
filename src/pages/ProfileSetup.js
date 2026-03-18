@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { supabase } from '../lib/supabase';
-
 import logoIcon from '../logo-icon.png';
 
 export default function ProfileSetup({ session, onComplete }) {
@@ -15,7 +14,7 @@ export default function ProfileSetup({ session, onComplete }) {
       return;
     }
     if (!phone.startsWith('09')) {
-      setError('Gcash number must start with 09');
+      setError('GCash number must start with 09');
       return;
     }
     setLoading(true);
@@ -61,37 +60,42 @@ export default function ProfileSetup({ session, onComplete }) {
       {/* Glow */}
       <div style={{
         position: 'absolute', top: '-80px', right: '-80px',
-        width: '280px', height: '280px', borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(255,229,102,0.15) 0%, transparent 65%)',
+        width: '300px', height: '300px', borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(255,229,102,0.12) 0%, transparent 65%)',
+        pointerEvents: 'none'
+      }}/>
+      <div style={{
+        position: 'absolute', bottom: '300px', left: '-60px',
+        width: '200px', height: '200px', borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(46,158,79,0.15) 0%, transparent 65%)',
         pointerEvents: 'none'
       }}/>
 
-      {/* Top header */}
+      {/* Header */}
       <div style={{
         padding: '52px 24px 28px',
-        animation: 'fadeUp 0.5s ease forwards'
+        animation: 'fadeUp 0.4s ease forwards'
       }}>
         {/* Brand */}
         <div style={{
           display: 'flex', alignItems: 'center',
-          gap: '10px', marginBottom: '28px'
+          gap: '10px', marginBottom: '32px'
         }}>
           <div style={{
-            width: '38px', height: '38px',
+            width: '36px', height: '36px',
             background: 'var(--yellow)',
-            borderRadius: '11px',
+            borderRadius: '10px',
             display: 'flex', alignItems: 'center',
-justifyContent: 'center', fontSize: '18px'
-}}>
-  <img src={logoIcon} alt="PasaBuy" style={{ width: '28px', height: '28px', borderRadius: '8px' }}/>
-</div>
+            justifyContent: 'center'
+          }}>
+            <img src={logoIcon} alt="PasaBuy"
+              style={{ width: '26px', height: '26px', borderRadius: '6px' }}/>
+          </div>
           <span style={{
             fontFamily: 'Raleway, sans-serif',
-color: 'var(--yellow)',
-fontSize: '20px', fontWeight: '800'
-}}>
-  <img src={logoIcon} alt="PasaBuy" style={{ height: '28px' }}/>
-</span>
+            color: 'var(--yellow)',
+            fontSize: '18px', fontWeight: '800'
+          }}>PasaBuy</span>
         </div>
 
         {/* Step indicator */}
@@ -100,24 +104,25 @@ fontSize: '20px', fontWeight: '800'
         }}>
           {[0, 1].map(i => (
             <div key={i} style={{
-              height: '4px', flex: 1, borderRadius: '4px',
+              height: '3px', flex: 1, borderRadius: '4px',
               background: i === 0
                 ? 'var(--yellow)'
-                : 'rgba(255,255,255,0.2)'
+                : 'rgba(255,255,255,0.15)'
             }}/>
           ))}
         </div>
 
         <p style={{
-          color: 'rgba(255,255,255,0.5)',
-          fontSize: '12px', fontWeight: '700',
+          color: 'rgba(255,255,255,0.45)',
+          fontSize: '11px', fontWeight: '700',
           textTransform: 'uppercase',
-          letterSpacing: '1.2px', marginBottom: '6px'
+          letterSpacing: '1.4px', marginBottom: '8px'
         }}>Step 1 of 2</p>
         <h1 style={{
           fontFamily: 'Raleway, sans-serif',
-          color: 'white', fontSize: '32px',
-          fontWeight: '800', lineHeight: '1.15'
+          color: 'white', fontSize: '30px',
+          fontWeight: '800', lineHeight: '1.2',
+          letterSpacing: '-0.3px'
         }}>Set up your<br/>profile ✨</h1>
       </div>
 
@@ -126,13 +131,13 @@ fontSize: '20px', fontWeight: '800'
         flex: 1,
         background: 'white',
         borderRadius: '32px 32px 0 0',
-        padding: '28px 24px 40px',
-        boxShadow: '0 -4px 48px rgba(0,0,0,0.2)',
-        animation: 'fadeUp 0.5s ease 0.15s both'
+        padding: '24px 24px 40px',
+        boxShadow: '0 -8px 48px rgba(0,0,0,0.18)',
+        animation: 'fadeUp 0.4s ease 0.12s both'
       }}>
         {/* Handle */}
         <div style={{
-          width: '36px', height: '4px',
+          width: '32px', height: '4px',
           background: '#EDE5E5', borderRadius: '4px',
           margin: '0 auto 24px'
         }}/>
@@ -140,21 +145,21 @@ fontSize: '20px', fontWeight: '800'
         {/* User info row */}
         <div style={{
           display: 'flex', alignItems: 'center',
-          gap: '14px',
-          background: 'linear-gradient(135deg, #FFF5F5, #FFF9EC)',
-          border: '1.5px solid rgba(139,0,0,0.08)',
-          borderRadius: '18px',
-          padding: '14px 16px',
-          marginBottom: '28px'
+          gap: '12px',
+          background: '#FFF8F8',
+          border: '1px solid rgba(139,0,0,0.08)',
+          borderRadius: '16px',
+          padding: '14px',
+          marginBottom: '24px'
         }}>
-          <div style={{ position: 'relative' }}>
+          <div style={{ position: 'relative', flexShrink: 0 }}>
             <img
               src={session.user.user_metadata.avatar_url}
               alt="Profile"
               style={{
-                width: '52px', height: '52px',
+                width: '48px', height: '48px',
                 borderRadius: '50%',
-                border: '2.5px solid var(--maroon)'
+                border: '2px solid var(--maroon)'
               }}
             />
             <div style={{
@@ -171,7 +176,7 @@ fontSize: '20px', fontWeight: '800'
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <p style={{
-              fontWeight: '700', fontSize: '15px',
+              fontWeight: '700', fontSize: '14px',
               color: 'var(--text)',
               whiteSpace: 'nowrap',
               overflow: 'hidden',
@@ -188,7 +193,7 @@ fontSize: '20px', fontWeight: '800'
           <div style={{
             background: 'var(--maroon)',
             color: 'white',
-            padding: '5px 10px',
+            padding: '4px 10px',
             borderRadius: '20px',
             fontSize: '10px', fontWeight: '700',
             flexShrink: 0,
@@ -200,31 +205,29 @@ fontSize: '20px', fontWeight: '800'
           </div>
         </div>
 
-        {/* Phone label */}
+        {/* GCash label */}
         <p style={{
-          fontSize: '12px', fontWeight: '700',
+          fontSize: '11px', fontWeight: '700',
           color: 'var(--text-soft)',
           textTransform: 'uppercase',
-          letterSpacing: '0.8px',
+          letterSpacing: '1px',
           marginBottom: '10px'
         }}>📱 GCash Number</p>
 
         {/* Phone input */}
         <div style={{
-          borderRadius: '16px',
-          border: `2px solid ${focused ? 'var(--maroon)' : '#EDE5E5'}`,
+          borderRadius: '14px',
+          border: `1.5px solid ${focused ? 'var(--maroon)' : '#EDE5E5'}`,
           display: 'flex', alignItems: 'center',
-          background: focused ? '#FFF5F5' : '#FAFAFA',
+          background: focused ? '#FFF8F8' : '#FAFAFA',
           marginBottom: '8px',
           transition: 'all 0.2s ease',
-          boxShadow: focused
-            ? '0 0 0 4px rgba(139,0,0,0.08)'
-            : 'none'
+          boxShadow: focused ? '0 0 0 3px rgba(139,0,0,0.08)' : 'none'
         }}>
           <div style={{
-            padding: '14px 16px',
-            fontSize: '22px',
-            borderRight: `2px solid ${focused ? '#FFCDD2' : '#EDE5E5'}`,
+            padding: '13px 14px',
+            fontSize: '20px',
+            borderRight: `1.5px solid ${focused ? '#FFCDD2' : '#EDE5E5'}`,
             transition: 'border-color 0.2s'
           }}>🇵🇭</div>
           <input
@@ -236,8 +239,8 @@ fontSize: '20px', fontWeight: '800'
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
             style={{
-              flex: 1, padding: '14px 16px',
-              fontSize: '20px', fontWeight: '700',
+              flex: 1, padding: '13px 14px',
+              fontSize: '18px', fontWeight: '700',
               letterSpacing: '2px',
               background: 'transparent',
               color: 'var(--text)'
@@ -245,14 +248,14 @@ fontSize: '20px', fontWeight: '800'
           />
           {isValid && (
             <div style={{
-              padding: '0 16px',
+              padding: '0 14px',
               color: '#22C55E',
-              fontSize: '22px'
+              fontSize: '20px'
             }}>✓</div>
           )}
         </div>
 
-        {/* Progress */}
+        {/* Progress bar */}
         <div style={{
           height: '3px', background: '#F0E8E8',
           borderRadius: '4px', marginBottom: '20px',
@@ -270,19 +273,20 @@ fontSize: '20px', fontWeight: '800'
         {/* Warning box */}
         <div style={{
           background: '#FFFBEB',
-          border: '1.5px solid #FDE68A',
-          borderRadius: '14px',
-          padding: '14px',
+          border: '1px solid #FDE68A',
+          borderRadius: '12px',
+          padding: '12px 14px',
           display: 'flex', gap: '10px',
-          marginBottom: '24px'
+          alignItems: 'flex-start',
+          marginBottom: '20px'
         }}>
-          <span style={{ fontSize: '18px', flexShrink: 0 }}>⚠️</span>
+          <span style={{ fontSize: '16px', flexShrink: 0, marginTop: '1px' }}>⚠️</span>
           <p style={{
             fontSize: '12px', color: '#92400E',
-            lineHeight: '1.65', fontWeight: '500'
+            lineHeight: '1.6', fontWeight: '500'
           }}>
-            Use your <strong>real GCash number</strong> — your earnings will be 
-transferred here after each completed transaction.{' '}
+            Use your <strong>real GCash number</strong> — your earnings will be
+            transferred here after each completed transaction.
           </p>
         </div>
 
@@ -290,13 +294,13 @@ transferred here after each completed transaction.{' '}
         {error && (
           <div style={{
             background: '#FEF2F2',
-            border: '1.5px solid #FECACA',
+            border: '1px solid #FECACA',
             borderRadius: '12px',
-            padding: '12px 14px',
+            padding: '11px 14px',
             marginBottom: '16px',
             display: 'flex', gap: '8px', alignItems: 'center'
           }}>
-            <span>❌</span>
+            <span style={{ fontSize: '14px' }}>❌</span>
             <p style={{
               color: '#DC2626', fontSize: '13px', fontWeight: '600'
             }}>{error}</p>
@@ -308,16 +312,14 @@ transferred here after each completed transaction.{' '}
           onClick={handleSubmit}
           disabled={loading || !isValid}
           style={{
-            width: '100%', padding: '17px',
-            borderRadius: '16px',
-            background: (!isValid || loading)
-              ? '#F0E8E8' : 'var(--maroon)',
+            width: '100%', padding: '16px',
+            borderRadius: '14px',
+            background: (!isValid || loading) ? '#F0E8E8' : 'var(--maroon)',
             color: (!isValid || loading) ? '#C0A8A8' : 'white',
-            fontSize: '16px', fontWeight: '800',
-            letterSpacing: '0.3px',
-            boxShadow: (!isValid || loading)
-              ? 'none' : 'var(--shadow-maroon)',
-            transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)'
+            fontSize: '15px', fontWeight: '800',
+            letterSpacing: '0.2px',
+            boxShadow: (!isValid || loading) ? 'none' : 'var(--shadow-maroon)',
+            transition: 'all 0.2s ease'
           }}
         >
           {loading ? '⏳ Setting up your profile...' : 'Complete Setup →'}

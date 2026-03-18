@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
-
 import logoIcon from '../logo-icon.png';
 
 export default function Home({ user }) {
@@ -9,6 +8,7 @@ export default function Home({ user }) {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     fetchEntries();
     const channel = supabase
@@ -55,45 +55,36 @@ export default function Home({ user }) {
         {/* Glow */}
         <div style={{
           position: 'absolute', top: '-40px', right: '-40px',
-          width: '200px', height: '200px', borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(255,229,102,0.12) 0%, transparent 65%)',
+          width: '220px', height: '220px', borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(255,229,102,0.1) 0%, transparent 65%)',
           pointerEvents: 'none'
         }}/>
 
+        {/* Top bar */}
         <div style={{
           display: 'flex',
           justifyContent: 'space-between',
-          alignItems: 'flex-start'
+          alignItems: 'center',
+          marginBottom: '20px'
         }}>
-          <div>
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: '8px'
+          }}>
             <div style={{
+              width: '32px', height: '32px',
+              background: 'var(--yellow)',
+              borderRadius: '10px',
               display: 'flex', alignItems: 'center',
-              gap: '8px', marginBottom: '6px'
+              justifyContent: 'center'
             }}>
-              <div style={{
-                width: '32px', height: '32px',
-                background: 'var(--yellow)',
-                borderRadius: '10px',
-                display: 'flex', alignItems: 'center',
-justifyContent: 'center'
-}}>
-  <img src={logoIcon} alt="PasaBuy" style={{ width: '26px', height: '26px', borderRadius: '7px' }}/>
-</div>
-<span style={{
-  fontFamily: 'Raleway, sans-serif',
-  color: 'var(--yellow)',
-  fontSize: '18px', fontWeight: '800'
-}}>PasaBuy</span>
+              <img src={logoIcon} alt="PasaBuy"
+                style={{ width: '24px', height: '24px', borderRadius: '6px' }}/>
             </div>
-            <h1 style={{
+            <span style={{
               fontFamily: 'Raleway, sans-serif',
-              color: 'white', fontSize: '26px',
-              fontWeight: '800', lineHeight: '1.2'
-            }}>Hey, {user.name?.split(' ')[0]}! 👋</h1>
-            <p style={{
-              color: 'rgba(255,255,255,0.55)',
-              fontSize: '13px', marginTop: '4px'
-            }}>What are you up to today?</p>
+              color: 'var(--yellow)',
+              fontSize: '17px', fontWeight: '800'
+            }}>PasaBuy</span>
           </div>
 
           <img
@@ -101,44 +92,72 @@ justifyContent: 'center'
             alt="Profile"
             onClick={() => navigate('/profile')}
             style={{
-              width: '48px', height: '48px',
+              width: '40px', height: '40px',
               borderRadius: '50%',
-              border: '2.5px solid var(--yellow)',
+              border: '2px solid var(--yellow)',
               cursor: 'pointer',
-              boxShadow: 'var(--shadow-yellow)'
+              boxShadow: '0 4px 12px rgba(255,229,102,0.25)'
             }}
           />
         </div>
+
+        {/* Greeting */}
+        <h1 style={{
+          fontFamily: 'Raleway, sans-serif',
+          color: 'white', fontSize: '26px',
+          fontWeight: '800', lineHeight: '1.2',
+          marginBottom: '4px',
+          letterSpacing: '-0.3px'
+        }}>Hey, {user.name?.split(' ')[0]}! 👋</h1>
+        <p style={{
+          color: 'rgba(255,255,255,0.5)',
+          fontSize: '13px', marginBottom: '20px'
+        }}>What are you up to today?</p>
 
         {/* Post entry CTA */}
         <button
           onClick={() => navigate('/post-entry')}
           style={{
-            width: '100%', marginTop: '20px',
+            width: '100%',
             padding: '16px 20px',
             borderRadius: '18px',
             background: 'var(--yellow)',
             color: 'var(--maroon)',
-            fontSize: '15px', fontWeight: '800',
+            fontSize: '14px', fontWeight: '800',
             display: 'flex', alignItems: 'center',
             justifyContent: 'space-between',
-            boxShadow: 'var(--shadow-yellow)'
+            boxShadow: '0 8px 24px rgba(255,229,102,0.3)'
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span style={{ fontSize: '22px' }}>🏃</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{
+              width: '40px', height: '40px',
+              background: 'rgba(139,0,0,0.12)',
+              borderRadius: '12px',
+              display: 'flex', alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '20px'
+            }}>🏃</div>
             <div style={{ textAlign: 'left' }}>
-              <p style={{ fontSize: '15px', fontWeight: '800' }}>
+              <p style={{ fontSize: '14px', fontWeight: '800' }}>
                 I'm going out!
               </p>
               <p style={{
                 fontSize: '11px',
                 fontWeight: '500',
-                opacity: 0.7
+                opacity: 0.65,
+                marginTop: '1px'
               }}>Post an entry & earn commission</p>
             </div>
           </div>
-          <span style={{ fontSize: '20px' }}>→</span>
+          <span style={{
+            width: '28px', height: '28px',
+            background: 'rgba(139,0,0,0.1)',
+            borderRadius: '50%',
+            display: 'flex', alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '14px'
+          }}>→</span>
         </button>
       </div>
 
@@ -147,16 +166,17 @@ justifyContent: 'center'
         flex: 1,
         background: 'white',
         borderRadius: '32px 32px 0 0',
-        padding: '24px 20px 100px',
-        boxShadow: '0 -4px 48px rgba(0,0,0,0.2)'
+        padding: '20px 20px 100px',
+        boxShadow: '0 -8px 48px rgba(0,0,0,0.18)'
       }}>
         {/* Handle */}
         <div style={{
-          width: '36px', height: '4px',
+          width: '32px', height: '4px',
           background: '#EDE5E5', borderRadius: '4px',
           margin: '0 auto 20px'
         }}/>
 
+        {/* Section header */}
         <div style={{
           display: 'flex',
           justifyContent: 'space-between',
@@ -165,16 +185,17 @@ justifyContent: 'center'
         }}>
           <h2 style={{
             fontFamily: 'Raleway, sans-serif',
-            fontSize: '20px', fontWeight: '800',
-            color: 'var(--text)'
+            fontSize: '18px', fontWeight: '800',
+            color: 'var(--text)',
+            letterSpacing: '-0.2px'
           }}>Active Entries</h2>
           <span style={{
             background: entries.length > 0 ? '#FEF3F2' : '#F5F5F5',
             color: entries.length > 0 ? 'var(--maroon)' : 'var(--text-soft)',
-            border: `1.5px solid ${entries.length > 0 ? '#FECACA' : '#E5E5E5'}`,
+            border: `1px solid ${entries.length > 0 ? '#FECACA' : '#E5E5E5'}`,
             borderRadius: '100px',
-            padding: '4px 12px',
-            fontSize: '12px', fontWeight: '700'
+            padding: '3px 10px',
+            fontSize: '11px', fontWeight: '700'
           }}>{entries.length} active</span>
         </div>
 
@@ -182,15 +203,15 @@ justifyContent: 'center'
         {loading && [1, 2, 3].map(i => (
           <div key={i} style={{
             background: '#F8F4F4',
-            borderRadius: '18px',
-            height: '120px',
+            borderRadius: '16px',
+            height: '110px',
             marginBottom: '12px',
             overflow: 'hidden',
             position: 'relative'
           }}>
             <div style={{
               position: 'absolute', inset: 0,
-              background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.8) 50%, transparent 100%)',
+              background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.7) 50%, transparent 100%)',
               animation: 'shimmer 1.5s infinite'
             }}/>
           </div>
@@ -200,15 +221,15 @@ justifyContent: 'center'
         {!loading && entries.length === 0 && (
           <div style={{
             textAlign: 'center',
-            padding: '52px 24px',
+            padding: '48px 24px',
             background: '#FFF8F8',
-            borderRadius: '24px',
-            border: '1.5px dashed #FECACA'
+            borderRadius: '20px',
+            border: '1px dashed #FECACA'
           }}>
-            <div style={{ fontSize: '52px', marginBottom: '16px' }}>🏪</div>
+            <div style={{ fontSize: '48px', marginBottom: '14px' }}>🏪</div>
             <h3 style={{
               fontFamily: 'Raleway, sans-serif',
-              color: 'var(--text)', fontSize: '18px',
+              color: 'var(--text)', fontSize: '17px',
               fontWeight: '800', marginBottom: '8px'
             }}>No active entries yet</h3>
             <p style={{
@@ -228,38 +249,38 @@ justifyContent: 'center'
             onClick={() => navigate(`/entry/${entry.id}`)}
             style={{
               background: 'white',
-              borderRadius: '20px',
+              borderRadius: '18px',
               padding: '16px',
               marginBottom: '12px',
-              border: '1.5px solid #F0E8E8',
+              border: '1px solid #F0E8E8',
               cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
+              transition: 'all 0.18s ease',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
               animation: `fadeUp 0.4s ease ${idx * 0.05}s both`
             }}
             onMouseEnter={e => {
               e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 8px 24px rgba(139,0,0,0.1)';
+              e.currentTarget.style.boxShadow = '0 8px 24px rgba(139,0,0,0.08)';
               e.currentTarget.style.borderColor = '#FECACA';
             }}
             onMouseLeave={e => {
               e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 2px 12px rgba(0,0,0,0.04)';
+              e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.04)';
               e.currentTarget.style.borderColor = '#F0E8E8';
             }}
           >
             {/* Buyer row */}
             <div style={{
               display: 'flex', alignItems: 'center',
-              gap: '10px', marginBottom: '14px'
+              gap: '10px', marginBottom: '12px'
             }}>
               <img
                 src={entry.users?.photo_url}
                 alt="Buyer"
                 style={{
-                  width: '42px', height: '42px',
+                  width: '40px', height: '40px',
                   borderRadius: '50%',
-                  border: '2px solid var(--maroon)'
+                  border: '2px solid #F0E8E8'
                 }}
               />
               <div style={{ flex: 1 }}>
@@ -275,9 +296,9 @@ justifyContent: 'center'
               <span style={{
                 background: '#F0FDF4',
                 color: '#16A34A',
-                border: '1.5px solid #BBF7D0',
+                border: '1px solid #BBF7D0',
                 borderRadius: '100px',
-                padding: '4px 10px',
+                padding: '3px 10px',
                 fontSize: '11px', fontWeight: '700'
               }}>● Active</span>
             </div>
@@ -285,30 +306,33 @@ justifyContent: 'center'
             {/* Details */}
             <div style={{
               background: '#FAFAFA',
-              borderRadius: '14px',
+              borderRadius: '12px',
               padding: '12px',
               display: 'flex',
               flexDirection: 'column',
-              gap: '8px'
+              gap: '8px',
+              marginBottom: '10px'
             }}>
               {[
                 { icon: '📍', label: 'Going to', value: entry.location },
                 { icon: '🛍️', label: 'Can buy', value: entry.what_can_buy },
-                
               ].map((item, i) => (
                 <div key={i} style={{
-                  display: 'flex', gap: '10px', alignItems: 'flex-start'
+                  display: 'flex', gap: '10px',
+                  alignItems: 'flex-start',
+                  paddingBottom: i === 0 ? '8px' : '0',
+                  borderBottom: i === 0 ? '1px solid #F0E8E8' : 'none'
                 }}>
                   <span style={{ fontSize: '14px', marginTop: '1px' }}>{item.icon}</span>
                   <div>
-                    <span style={{
+                    <p style={{
                       fontSize: '10px', color: 'var(--text-soft)',
                       fontWeight: '600', textTransform: 'uppercase',
-                      letterSpacing: '0.5px'
-                    }}>{item.label}</span>
+                      letterSpacing: '0.5px', marginBottom: '2px'
+                    }}>{item.label}</p>
                     <p style={{
-                      fontSize: '13px', fontWeight: '700',
-                      color: 'var(--text)', marginTop: '1px'
+                      fontSize: '13px', fontWeight: '600',
+                      color: 'var(--text)'
                     }}>{item.value}</p>
                   </div>
                 </div>
@@ -316,8 +340,7 @@ justifyContent: 'center'
             </div>
 
             <div style={{
-              display: 'flex', justifyContent: 'flex-end',
-              marginTop: '10px'
+              display: 'flex', justifyContent: 'flex-end'
             }}>
               <span style={{
                 color: 'var(--maroon)',
@@ -340,7 +363,7 @@ justifyContent: 'center'
         justifyContent: 'space-around',
         padding: '10px 0 20px',
         zIndex: 100,
-        boxShadow: '0 -4px 24px rgba(0,0,0,0.08)'
+        boxShadow: '0 -4px 24px rgba(0,0,0,0.06)'
       }}>
         {[
           { icon: '🏠', label: 'Home', path: '/' },
@@ -360,7 +383,7 @@ justifyContent: 'center'
                 borderRadius: '12px',
               }}
             >
-              <span style={{ fontSize: '22px' }}>{item.icon}</span>
+              <span style={{ fontSize: '20px' }}>{item.icon}</span>
               <span style={{
                 fontSize: '10px', fontWeight: '700',
                 color: active ? 'var(--maroon)' : '#C0B0B0',

@@ -19,18 +19,18 @@ export default function EntryDetail({ user }) {
   const isBuyer = entry?.buyer_id === user.id;
   const hasRequested = requests.some(r => r.pasabuyer_id === user.id);
 
-// eslint-disable-next-line react-hooks/exhaustive-deps
-useEffect(() => {
-  fetchEntry();
-  fetchRequests();
-  const channel = supabase
-    .channel('entry-detail')
-    .on('postgres_changes', {
-      event: '*', schema: 'public', table: 'requests'
-    }, () => fetchRequests())
-    .subscribe();
-  return () => supabase.removeChannel(channel);
-}, [id]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    fetchEntry();
+    fetchRequests();
+    const channel = supabase
+      .channel('entry-detail')
+      .on('postgres_changes', {
+        event: '*', schema: 'public', table: 'requests'
+      }, () => fetchRequests())
+      .subscribe();
+    return () => supabase.removeChannel(channel);
+  }, [id]);
 
   const fetchEntry = async () => {
     const { data } = await supabase
@@ -130,7 +130,20 @@ useEffect(() => {
       display: 'flex', alignItems: 'center',
       justifyContent: 'center', maxWidth: '480px', margin: '0 auto'
     }}>
-      <p style={{ color: 'white', fontSize: '16px' }}>Loading...</p>
+      <div style={{ textAlign: 'center' }}>
+        <div style={{
+          width: '40px', height: '40px',
+          background: 'var(--yellow)',
+          borderRadius: '12px',
+          margin: '0 auto 12px',
+          display: 'flex', alignItems: 'center',
+          justifyContent: 'center'
+        }}>
+          <img src={logoIcon} alt="PasaBuy"
+            style={{ width: '28px', height: '28px', borderRadius: '8px' }}/>
+        </div>
+        <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '14px' }}>Loading...</p>
+      </div>
     </div>
   );
 
@@ -155,6 +168,7 @@ useEffect(() => {
         padding: '52px 24px 24px',
         animation: 'fadeUp 0.4s ease forwards'
       }}>
+        {/* Top bar */}
         <div style={{
           display: 'flex', alignItems: 'center',
           justifyContent: 'space-between', marginBottom: '20px'
@@ -162,19 +176,28 @@ useEffect(() => {
           <button
             onClick={() => navigate('/')}
             style={{
-              background: 'rgba(255,255,255,0.12)',
+              background: 'rgba(255,255,255,0.1)',
               color: 'white', padding: '8px 16px',
               borderRadius: '100px', fontSize: '13px',
               fontWeight: '600', display: 'flex',
-              alignItems: 'center', gap: '6px'
+              alignItems: 'center', gap: '6px',
+              border: '1px solid rgba(255,255,255,0.12)'
             }}
           >← Back</button>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <img src={logoIcon} alt="PasaBuy"
-              style={{ width: '28px', height: '28px', borderRadius: '8px' }}/>
+            <div style={{
+              width: '30px', height: '30px',
+              background: 'var(--yellow)',
+              borderRadius: '9px',
+              display: 'flex', alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <img src={logoIcon} alt="PasaBuy"
+                style={{ width: '22px', height: '22px', borderRadius: '6px' }}/>
+            </div>
             <span style={{
               fontFamily: 'Raleway, sans-serif',
-              color: 'var(--yellow)', fontSize: '18px', fontWeight: '800'
+              color: 'var(--yellow)', fontSize: '17px', fontWeight: '800'
             }}>PasaBuy</span>
           </div>
         </div>
@@ -187,29 +210,29 @@ useEffect(() => {
             src={entry?.users?.photo_url}
             alt="Buyer"
             style={{
-              width: '52px', height: '52px',
+              width: '48px', height: '48px',
               borderRadius: '50%',
-              border: '2.5px solid var(--yellow)'
+              border: '2px solid var(--yellow)',
+              boxShadow: '0 4px 12px rgba(255,229,102,0.2)'
             }}
           />
-          <div>
+          <div style={{ flex: 1 }}>
             <p style={{
-              color: 'white', fontSize: '16px', fontWeight: '700'
+              color: 'white', fontSize: '15px', fontWeight: '700'
             }}>{entry?.users?.name}</p>
             <p style={{
-              color: 'rgba(255,255,255,0.55)',
+              color: 'rgba(255,255,255,0.5)',
               fontSize: '12px', marginTop: '2px'
             }}>
               {isBuyer ? '👋 This is your entry' : '🏃 Going out now'}
             </p>
           </div>
           <span style={{
-            marginLeft: 'auto',
-            background: '#F0FDF4',
-            color: '#16A34A',
-            border: '1.5px solid #BBF7D0',
+            background: 'rgba(34,197,94,0.15)',
+            color: '#4ADE80',
+            border: '1px solid rgba(74,222,128,0.3)',
             borderRadius: '100px',
-            padding: '5px 12px',
+            padding: '4px 12px',
             fontSize: '11px', fontWeight: '700'
           }}>● Active</span>
         </div>
@@ -219,13 +242,13 @@ useEffect(() => {
       <div style={{
         flex: 1, background: 'white',
         borderRadius: '32px 32px 0 0',
-        padding: '24px 20px 100px',
-        boxShadow: '0 -4px 48px rgba(0,0,0,0.2)',
-        animation: 'fadeUp 0.5s ease 0.15s both',
+        padding: '20px 20px 100px',
+        boxShadow: '0 -8px 48px rgba(0,0,0,0.18)',
+        animation: 'fadeUp 0.4s ease 0.12s both',
         overflowY: 'auto'
       }}>
         <div style={{
-          width: '36px', height: '4px',
+          width: '32px', height: '4px',
           background: '#EDE5E5', borderRadius: '4px',
           margin: '0 auto 20px'
         }}/>
@@ -233,31 +256,30 @@ useEffect(() => {
         {/* Entry details card */}
         <div style={{
           background: '#FAFAFA',
-          borderRadius: '18px',
+          borderRadius: '16px',
           padding: '16px',
-          marginBottom: '20px',
-          border: '1.5px solid #F0E8E8'
+          marginBottom: '16px',
+          border: '1px solid #F0E8E8'
         }}>
           {[
             { icon: '📍', label: 'Going to', value: entry?.location },
             { icon: '🛍️', label: 'Can buy', value: entry?.what_can_buy },
-            
           ].map((item, i) => (
             <div key={i} style={{
               display: 'flex', gap: '12px',
-              paddingBottom: i < 2 ? '12px' : '0',
-              marginBottom: i < 2 ? '12px' : '0',
-              borderBottom: i < 2 ? '1px solid #F0E8E8' : 'none'
+              paddingBottom: i === 0 ? '12px' : '0',
+              marginBottom: i === 0 ? '12px' : '0',
+              borderBottom: i === 0 ? '1px solid #F0E8E8' : 'none'
             }}>
-              <span style={{ fontSize: '18px' }}>{item.icon}</span>
+              <span style={{ fontSize: '16px', marginTop: '1px' }}>{item.icon}</span>
               <div>
                 <p style={{
-                  fontSize: '11px', color: '#B0A0A0',
+                  fontSize: '10px', color: '#B0A0A0',
                   fontWeight: '700', textTransform: 'uppercase',
-                  letterSpacing: '0.5px', marginBottom: '3px'
+                  letterSpacing: '0.7px', marginBottom: '3px'
                 }}>{item.label}</p>
                 <p style={{
-                  fontSize: '14px', fontWeight: '700',
+                  fontSize: '14px', fontWeight: '600',
                   color: 'var(--text)'
                 }}>{item.value}</p>
               </div>
@@ -269,15 +291,15 @@ useEffect(() => {
         {success && (
           <div style={{
             background: '#F0FDF4',
-            border: '1.5px solid #BBF7D0',
-            borderRadius: '14px',
-            padding: '14px 16px',
+            border: '1px solid #BBF7D0',
+            borderRadius: '12px',
+            padding: '12px 16px',
             marginBottom: '16px',
             display: 'flex', gap: '10px', alignItems: 'center'
           }}>
-            <span style={{ fontSize: '20px' }}>🎉</span>
+            <span style={{ fontSize: '18px' }}>🎉</span>
             <p style={{
-              color: '#16A34A', fontSize: '14px', fontWeight: '700'
+              color: '#16A34A', fontSize: '13px', fontWeight: '700'
             }}>Request submitted! Wait for the buyer to accept.</p>
           </div>
         )}
@@ -287,13 +309,13 @@ useEffect(() => {
           <button
             onClick={handleEndRun}
             style={{
-              width: '100%', padding: '14px',
-              borderRadius: '14px',
+              width: '100%', padding: '13px',
+              borderRadius: '13px',
               background: '#FEF2F2',
               color: '#DC2626',
-              border: '1.5px solid #FECACA',
-              fontSize: '14px', fontWeight: '700',
-              marginBottom: '20px'
+              border: '1px solid #FECACA',
+              fontSize: '13px', fontWeight: '700',
+              marginBottom: '16px'
             }}
           >🏁 End My Run</button>
         )}
@@ -303,28 +325,28 @@ useEffect(() => {
           <button
             onClick={() => setShowForm(true)}
             style={{
-              width: '100%', padding: '16px',
-              borderRadius: '16px',
+              width: '100%', padding: '15px',
+              borderRadius: '14px',
               background: 'var(--maroon)',
               color: 'white',
-              fontSize: '15px', fontWeight: '800',
+              fontSize: '14px', fontWeight: '800',
               boxShadow: 'var(--shadow-maroon)',
-              marginBottom: '20px'
+              marginBottom: '16px'
             }}
-          > Request a Pasabuy</button>
+          >🛍️ Request a Pasabuy</button>
         )}
 
         {/* Already requested */}
         {!isBuyer && hasRequested && (
           <div style={{
             background: '#FFF8E8',
-            border: '1.5px solid #FDE68A',
-            borderRadius: '14px',
-            padding: '14px 16px',
-            marginBottom: '20px',
+            border: '1px solid #FDE68A',
+            borderRadius: '12px',
+            padding: '12px 16px',
+            marginBottom: '16px',
             display: 'flex', gap: '10px', alignItems: 'center'
           }}>
-            <span>⏳</span>
+            <span style={{ fontSize: '16px' }}>⏳</span>
             <p style={{
               color: '#92400E', fontSize: '13px', fontWeight: '600'
             }}>You already submitted a request for this entry.</p>
@@ -334,23 +356,23 @@ useEffect(() => {
         {/* Request form */}
         {showForm && (
           <div style={{
-            background: '#FFF5F5',
-            border: '1.5px solid #FECACA',
-            borderRadius: '20px',
-            padding: '20px',
-            marginBottom: '20px',
+            background: '#FFF8F8',
+            border: '1px solid #FECACA',
+            borderRadius: '18px',
+            padding: '18px',
+            marginBottom: '16px',
             animation: 'fadeUp 0.3s ease forwards'
           }}>
             <h3 style={{
               fontFamily: 'Raleway, sans-serif',
-              fontSize: '17px', fontWeight: '800',
+              fontSize: '16px', fontWeight: '800',
               color: 'var(--maroon)', marginBottom: '16px'
-            }}> Your Request</h3>
+            }}>🛍️ Your Request</h3>
 
             <label style={{
-              display: 'block', fontSize: '12px',
-              fontWeight: '700', color: '#5A4A4A',
-              textTransform: 'uppercase', letterSpacing: '0.6px',
+              display: 'block', fontSize: '11px',
+              fontWeight: '700', color: 'var(--text-soft)',
+              textTransform: 'uppercase', letterSpacing: '1px',
               marginBottom: '6px'
             }}>Item Name *</label>
             <input
@@ -360,20 +382,21 @@ useEffect(() => {
               autoComplete="off"
               onChange={e => setItemName(e.target.value)}
               style={{
-                width: '100%', padding: '13px 14px',
-                borderRadius: '12px',
-                border: '2px solid #EDE5E5',
+                width: '100%', padding: '12px 14px',
+                borderRadius: '11px',
+                border: '1.5px solid #EDE5E5',
                 fontSize: '14px', fontWeight: '500',
-                background: 'white', marginBottom: '14px'
+                background: 'white', marginBottom: '12px',
+                transition: 'border-color 0.2s'
               }}
               onFocus={e => e.target.style.borderColor = 'var(--maroon)'}
               onBlur={e => e.target.style.borderColor = '#EDE5E5'}
             />
 
             <label style={{
-              display: 'block', fontSize: '12px',
-              fontWeight: '700', color: '#5A4A4A',
-              textTransform: 'uppercase', letterSpacing: '0.6px',
+              display: 'block', fontSize: '11px',
+              fontWeight: '700', color: 'var(--text-soft)',
+              textTransform: 'uppercase', letterSpacing: '1px',
               marginBottom: '6px'
             }}>Additional Details (optional)</label>
             <textarea
@@ -382,12 +405,13 @@ useEffect(() => {
               onChange={e => setItemDescription(e.target.value)}
               rows={3}
               style={{
-                width: '100%', padding: '13px 14px',
-                borderRadius: '12px',
-                border: '2px solid #EDE5E5',
+                width: '100%', padding: '12px 14px',
+                borderRadius: '11px',
+                border: '1.5px solid #EDE5E5',
                 fontSize: '14px', fontWeight: '500',
-                background: 'white', marginBottom: '16px',
-                resize: 'none', fontFamily: 'inherit'
+                background: 'white', marginBottom: '14px',
+                resize: 'none', fontFamily: 'inherit',
+                transition: 'border-color 0.2s'
               }}
               onFocus={e => e.target.style.borderColor = 'var(--maroon)'}
               onBlur={e => e.target.style.borderColor = '#EDE5E5'}
@@ -400,15 +424,15 @@ useEffect(() => {
               }}>❌ {error}</p>
             )}
 
-            <div style={{ display: 'flex', gap: '10px' }}>
+            <div style={{ display: 'flex', gap: '8px' }}>
               <button
                 onClick={() => { setShowForm(false); setError(''); }}
                 style={{
-                  flex: 1, padding: '13px',
-                  borderRadius: '12px',
+                  flex: 1, padding: '12px',
+                  borderRadius: '11px',
                   background: 'white',
-                  border: '2px solid #EDE5E5',
-                  fontSize: '14px', fontWeight: '700',
+                  border: '1.5px solid #EDE5E5',
+                  fontSize: '13px', fontWeight: '700',
                   color: '#888'
                 }}
               >Cancel</button>
@@ -416,12 +440,12 @@ useEffect(() => {
                 onClick={handleSubmitRequest}
                 disabled={submitting || !itemName}
                 style={{
-                  flex: 2, padding: '13px',
-                  borderRadius: '12px',
+                  flex: 2, padding: '12px',
+                  borderRadius: '11px',
                   background: (!itemName || submitting)
                     ? '#F0E8E8' : 'var(--maroon)',
                   color: (!itemName || submitting) ? '#C0A8A8' : 'white',
-                  fontSize: '14px', fontWeight: '800',
+                  fontSize: '13px', fontWeight: '800',
                   boxShadow: (!itemName || submitting)
                     ? 'none' : 'var(--shadow-maroon)'
                 }}
@@ -432,30 +456,32 @@ useEffect(() => {
 
         {/* Requests section */}
         <div>
-          <h3 style={{
-            fontFamily: 'Raleway, sans-serif',
-            fontSize: '17px', fontWeight: '800',
-            color: 'var(--text)', marginBottom: '14px',
+          <div style={{
             display: 'flex', alignItems: 'center',
-            justifyContent: 'space-between'
+            justifyContent: 'space-between',
+            marginBottom: '14px'
           }}>
-            Pasabuy Requests
+            <h3 style={{
+              fontFamily: 'Raleway, sans-serif',
+              fontSize: '16px', fontWeight: '800',
+              color: 'var(--text)'
+            }}>Pasabuy Requests</h3>
             <span style={{
               background: requests.length > 0 ? '#FEF3F2' : '#F5F5F5',
               color: requests.length > 0 ? 'var(--maroon)' : '#888',
-              border: `1.5px solid ${requests.length > 0 ? '#FECACA' : '#E5E5E5'}`,
+              border: `1px solid ${requests.length > 0 ? '#FECACA' : '#E5E5E5'}`,
               borderRadius: '100px', padding: '3px 10px',
-              fontSize: '12px', fontWeight: '700'
+              fontSize: '11px', fontWeight: '700'
             }}>{requests.length}</span>
-          </h3>
+          </div>
 
           {requests.length === 0 && (
             <div style={{
               textAlign: 'center', padding: '32px 24px',
-              background: '#FAFAFA', borderRadius: '18px',
-              border: '1.5px dashed #EDE5E5'
+              background: '#FAFAFA', borderRadius: '16px',
+              border: '1px dashed #EDE5E5'
             }}>
-              <div style={{ fontSize: '36px', marginBottom: '10px' }}>📭</div>
+              <div style={{ fontSize: '32px', marginBottom: '10px' }}>📭</div>
               <p style={{
                 color: '#B0A0A0', fontSize: '13px', fontWeight: '500'
               }}>No requests yet</p>
@@ -470,7 +496,7 @@ useEffect(() => {
                 borderRadius: '16px',
                 padding: '14px',
                 marginBottom: '10px',
-                border: '1.5px solid #F0E8E8',
+                border: '1px solid #F0E8E8',
                 boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
                 animation: `fadeUp 0.3s ease ${idx * 0.05}s both`
               }}>
@@ -485,7 +511,7 @@ useEffect(() => {
                     style={{
                       width: '36px', height: '36px',
                       borderRadius: '50%',
-                      border: '2px solid #EDE5E5'
+                      border: '1.5px solid #EDE5E5'
                     }}
                   />
                   <div style={{ flex: 1 }}>
@@ -494,13 +520,14 @@ useEffect(() => {
                       color: 'var(--text)'
                     }}>{req.users?.name}</p>
                     <p style={{
-                      fontSize: '11px', color: '#B0A0A0'
+                      fontSize: '11px', color: '#B0A0A0',
+                      marginTop: '1px'
                     }}>{formatTime(req.created_at)}</p>
                   </div>
                   <span style={{
                     background: statusStyle.bg,
                     color: statusStyle.color,
-                    border: `1.5px solid ${statusStyle.border}`,
+                    border: `1px solid ${statusStyle.border}`,
                     borderRadius: '100px',
                     padding: '3px 10px',
                     fontSize: '11px', fontWeight: '700'
@@ -510,13 +537,13 @@ useEffect(() => {
                 {/* Item info */}
                 <div style={{
                   background: '#FAFAFA',
-                  borderRadius: '12px',
-                  padding: '12px',
+                  borderRadius: '11px',
+                  padding: '11px 12px',
                   marginBottom: req.status === 'pending' && isBuyer ? '12px' : '0'
                 }}>
                   <p style={{
-                    fontSize: '14px', fontWeight: '700',
-                    color: 'var(--text)', marginBottom: '4px'
+                    fontSize: '13px', fontWeight: '700',
+                    color: 'var(--text)', marginBottom: '3px'
                   }}>🛍️ {req.item_name}</p>
                   {req.item_description && (
                     <p style={{
@@ -537,7 +564,7 @@ useEffect(() => {
                         flex: 1, padding: '10px',
                         borderRadius: '10px',
                         background: 'white',
-                        border: '1.5px solid #FECACA',
+                        border: '1px solid #FECACA',
                         color: '#DC2626',
                         fontSize: '13px', fontWeight: '700'
                       }}
@@ -550,13 +577,13 @@ useEffect(() => {
                         background: 'var(--maroon)',
                         color: 'white',
                         fontSize: '13px', fontWeight: '800',
-                        boxShadow: '0 4px 12px rgba(139,0,0,0.25)'
+                        boxShadow: '0 4px 12px rgba(139,0,0,0.2)'
                       }}
                     >✓ Accept Request</button>
                   </div>
                 )}
 
-                {/* Go to chat if accepted */}
+                {/* Open chat */}
                 {req.status === 'accepted' && (
                   <button
                     onClick={() => navigate(`/chat/${req.id}`)}
@@ -565,7 +592,7 @@ useEffect(() => {
                       borderRadius: '10px',
                       background: '#F0FDF4',
                       color: '#16A34A',
-                      border: '1.5px solid #BBF7D0',
+                      border: '1px solid #BBF7D0',
                       fontSize: '13px', fontWeight: '700',
                       marginTop: '10px'
                     }}

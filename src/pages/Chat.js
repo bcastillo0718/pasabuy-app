@@ -18,7 +18,7 @@ export default function Chat({ user }) {
   const [uploadingProof, setUploadingProof] = useState(false);
   const [ocrError, setOcrError] = useState('');
   const [showDisputeModal, setShowDisputeModal] = useState(false);
-const [disputeReason, setDisputeReason] = useState('');
+  const [disputeReason, setDisputeReason] = useState('');
   const bottomRef = useRef(null);
   const receiptInputRef = useRef(null);
   const proofInputRef = useRef(null);
@@ -57,16 +57,10 @@ const [disputeReason, setDisputeReason] = useState('');
   const fetchRequest = async () => {
     const { data } = await supabase
       .from('requests')
-      .select(`
-        *,
-        pasabuyer:users!requests_pasabuyer_id_fkey(name, photo_url)
-      `)
+      .select(`*, pasabuyer:users!requests_pasabuyer_id_fkey(name, photo_url)`)
       .eq('id', requestId)
       .single();
     setRequest(data);
-    console.log('REQUEST:', data);
-    console.log('status:', data?.status);
-    console.log('proof_photo_url:', data?.proof_photo_url);
 
     if (data?.entry_id) {
       const { data: entryData } = await supabase
@@ -75,12 +69,10 @@ const [disputeReason, setDisputeReason] = useState('');
         .eq('id', data.entry_id)
         .single();
       setEntry(entryData);
-      console.log('ENTRY buyer_id:', entryData?.buyer_id);
-      console.log('USER id:', user.id);
-      console.log('isBuyer:', entryData?.buyer_id === user.id);
     }
     setLoading(false);
   };
+
   const fetchMessages = async () => {
     const { data } = await supabase
       .from('messages')
@@ -124,7 +116,6 @@ const [disputeReason, setDisputeReason] = useState('');
     fetchRequest();
   };
 
-  // Upload image to ImgBB
   const uploadToImgBB = async (file) => {
     const formData = new FormData();
     formData.append('image', file);
@@ -137,60 +128,48 @@ const [disputeReason, setDisputeReason] = useState('');
     throw new Error('Image upload failed');
   };
 
-  // OCR via Google Vision API
-  // OCR via Tesseract.js (runs locally, free)
-const runOCR = async (file) => {
-  const { createWorker } = await import('tesseract.js');
-  const worker = await createWorker('eng');
-  const { data: { text } } = await worker.recognize(file);
-  await worker.terminate();
-  return text;
-};
+  const runOCR = async (file) => {
+    const { createWorker } = await import('tesseract.js');
+    const worker = await createWorker('eng');
+    const { data: { text } } = await worker.recognize(file);
+    await worker.terminate();
+    return text;
+  };
 
-  // Verify receipt using OCR
   const handleReceiptUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
     setUploadingReceipt(true);
     setOcrError('');
 
     try {
-const imageUrl = await uploadToImgBB(file);
-const ocrText = await runOCR(file);
-console.log('OCR TEXT:', ocrText);
-      
-      
+      const imageUrl = await uploadToImgBB(file);
+      const ocrText = await runOCR(file);
+      const gcashNumber = '09065935527';
+      const ocrNormalized = ocrText.replace(/\s/g, '').toLowerCase();
+      const hasGcashNumber =
+        ocrNormalized.includes(gcashNumber) ||
+        ocrNormalized.includes('+639065935527') ||
+        ocrText.includes('+63 906 593 5527');
 
-// Check GCash number — handle both 09... and +63... formats
-const gcashNumber = '09065935527';
-const ocrNormalized = ocrText.replace(/\s/g, '').toLowerCase();
-const hasGcashNumber =
-  ocrNormalized.includes(gcashNumber) ||
-  ocrNormalized.includes('+639065935527') ||
-  ocrText.includes('+63 906 593 5527');
-
-// Check amount
-const expectedAmount = request?.total_amount?.toFixed(2);
-const expectedWhole = Math.round(request?.total_amount).toString();
-const hasAmount =
-  ocrNormalized.includes(expectedAmount?.replace('.', '')) ||
-  ocrNormalized.includes(expectedAmount) ||
-  ocrNormalized.includes(expectedWhole);
+      const expectedAmount = request?.total_amount?.toFixed(2);
+      const expectedWhole = Math.round(request?.total_amount).toString();
+      const hasAmount =
+        ocrNormalized.includes(expectedAmount?.replace('.', '')) ||
+        ocrNormalized.includes(expectedAmount) ||
+        ocrNormalized.includes(expectedWhole);
 
       if (!hasGcashNumber) {
         setOcrError('❌ GCash number not found in receipt. Make sure you sent to 09065935527.');
         setUploadingReceipt(false);
         return;
       }
-
       if (!hasAmount) {
         setOcrError(`❌ Payment amount not verified. Expected ₱${expectedAmount}. Please check your receipt.`);
         setUploadingReceipt(false);
         return;
       }
 
-      // Verified! Update request
       await supabase.from('requests').update({
         payment_status: 'paid',
         gcash_reference: imageUrl
@@ -203,24 +182,19 @@ const hasAmount =
       });
 
       fetchRequest();
-
     } catch (err) {
       setOcrError('❌ Something went wrong. Please try again.');
     }
-
     setUploadingReceipt(false);
   };
 
-  // Proof of delivery upload
   const handleProofUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
     setUploadingProof(true);
 
     try {
       const imageUrl = await uploadToImgBB(file);
-
       await supabase.from('requests').update({
         status: 'delivered',
         proof_photo_url: imageUrl
@@ -231,62 +205,45 @@ const hasAmount =
         sender_id: user.id,
         text: `📦 PROOF OF DELIVERY\n[photo]${imageUrl}`
       });
-
       fetchRequest();
     } catch (err) {
       alert('Photo upload failed. Please try again.');
     }
-
     setUploadingProof(false);
   };
 
   const handleRaiseDispute = async () => {
-  if (!disputeReason.trim()) return;
+    if (!disputeReason.trim()) return;
+    const hour = new Date().getHours();
+    if (hour < 8 || hour >= 22) {
+      alert('Dispute support is available between 8AM - 10PM only.');
+      return;
+    }
 
-  const isWithinHours = (() => {
-    const now = new Date();
-    const hour = now.getHours();
-    return hour >= 8 && hour < 22;
-  })();
-
-  if (!isWithinHours) {
-    alert('Dispute support is available between 8AM - 10PM only. Please try again during these hours.');
-    return;
-  }
-
-  await supabase.from('disputes').insert({
-    request_id: requestId,
-    raised_by: user.id,
-    reason: disputeReason.trim(),
-    status: 'open'
-  });
-
-  await supabase.from('requests').update({
-    status: 'disputed'
-  }).eq('id', requestId);
-
-  await supabase.from('messages').insert({
-    request_id: requestId,
-    sender_id: user.id,
-    text: `🚨 A dispute has been raised. The admin has been notified and will review this transaction.`
-  });
-
-  setShowDisputeModal(false);
-  setDisputeReason('');
-  fetchRequest();
-};
+    await supabase.from('disputes').insert({
+      request_id: requestId,
+      raised_by: user.id,
+      reason: disputeReason.trim(),
+      status: 'open'
+    });
+    await supabase.from('requests').update({ status: 'disputed' }).eq('id', requestId);
+    await supabase.from('messages').insert({
+      request_id: requestId,
+      sender_id: user.id,
+      text: `🚨 A dispute has been raised. The admin has been notified and will review this transaction.`
+    });
+    setShowDisputeModal(false);
+    setDisputeReason('');
+    fetchRequest();
+  };
 
   const handleConfirmReceived = async () => {
-    await supabase.from('requests').update({
-      status: 'completed'
-    }).eq('id', requestId);
-
+    await supabase.from('requests').update({ status: 'completed' }).eq('id', requestId);
     await supabase.from('messages').insert({
       request_id: requestId,
       sender_id: user.id,
       text: `🎉 Order completed! Pasabuyer confirmed receipt. Thank you for using PasaBuy!`
     });
-
     fetchRequest();
   };
 
@@ -312,7 +269,18 @@ const hasAmount =
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       maxWidth: '480px', margin: '0 auto'
     }}>
-      <p style={{ color: 'white' }}>Loading chat...</p>
+      <div style={{ textAlign: 'center' }}>
+        <div style={{
+          width: '40px', height: '40px',
+          background: 'var(--yellow)', borderRadius: '12px',
+          margin: '0 auto 12px',
+          display: 'flex', alignItems: 'center', justifyContent: 'center'
+        }}>
+          <img src={logoIcon} alt="PasaBuy"
+            style={{ width: '28px', height: '28px', borderRadius: '8px' }}/>
+        </div>
+        <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '14px' }}>Loading chat...</p>
+      </div>
     </div>
   );
 
@@ -326,14 +294,16 @@ const hasAmount =
       maxWidth: '480px', margin: '0 auto', position: 'relative'
     }}>
       {/* Header */}
-      <div style={{ padding: '48px 20px 16px', flexShrink: 0 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+      <div style={{ padding: '48px 20px 14px', flexShrink: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <button
             onClick={() => navigate(-1)}
             style={{
-              background: 'rgba(255,255,255,0.12)', color: 'white',
-              padding: '8px 14px', borderRadius: '100px',
-              fontSize: '13px', fontWeight: '600', flexShrink: 0
+              background: 'rgba(255,255,255,0.1)',
+              color: 'white', padding: '8px 14px',
+              borderRadius: '100px', fontSize: '13px',
+              fontWeight: '600', flexShrink: 0,
+              border: '1px solid rgba(255,255,255,0.12)'
             }}
           >←</button>
 
@@ -341,8 +311,9 @@ const hasAmount =
             src={isBuyer ? request?.pasabuyer?.photo_url : entry?.users?.photo_url}
             alt=""
             style={{
-              width: '40px', height: '40px', borderRadius: '50%',
-              border: '2px solid var(--yellow)'
+              width: '38px', height: '38px', borderRadius: '50%',
+              border: '2px solid var(--yellow)',
+              flexShrink: 0
             }}
           />
           <div style={{ flex: 1, minWidth: 0 }}>
@@ -352,12 +323,21 @@ const hasAmount =
             }}>
               {isBuyer ? request?.pasabuyer?.name : entry?.users?.name}
             </p>
-            <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '11px', marginTop: '1px' }}>
-              🛍️ {request?.item_name}
-            </p>
+            <p style={{
+              color: 'rgba(255,255,255,0.5)',
+              fontSize: '11px', marginTop: '1px'
+            }}>🛍️ {request?.item_name}</p>
           </div>
-          <img src={logoIcon} alt="PasaBuy"
-            style={{ width: '28px', height: '28px', borderRadius: '8px', flexShrink: 0 }}/>
+          <div style={{
+            width: '28px', height: '28px',
+            background: 'var(--yellow)',
+            borderRadius: '8px',
+            display: 'flex', alignItems: 'center',
+            justifyContent: 'center', flexShrink: 0
+          }}>
+            <img src={logoIcon} alt="PasaBuy"
+              style={{ width: '22px', height: '22px', borderRadius: '6px' }}/>
+          </div>
         </div>
       </div>
 
@@ -367,32 +347,35 @@ const hasAmount =
         borderRadius: '28px 28px 0 0',
         display: 'flex', flexDirection: 'column',
         overflow: 'hidden',
-        boxShadow: '0 -4px 48px rgba(0,0,0,0.2)'
+        boxShadow: '0 -8px 48px rgba(0,0,0,0.2)'
       }}>
         {/* Status banner */}
         {banner && (
           <div style={{
-            background: banner.bg, border: `1px solid ${banner.border}`,
-            padding: '10px 16px', flexShrink: 0
+            background: banner.bg,
+            borderBottom: `1px solid ${banner.border}`,
+            padding: '10px 16px', flexShrink: 0,
+            display: 'flex', alignItems: 'center', gap: '8px'
           }}>
-            <p style={{ color: banner.color, fontSize: '12px', fontWeight: '700' }}>
-              {banner.text}
-            </p>
+            <p style={{
+              color: banner.color, fontSize: '12px',
+              fontWeight: '700', flex: 1
+            }}>{banner.text}</p>
           </div>
         )}
 
         {/* Messages */}
         <div style={{
           flex: 1, overflowY: 'auto',
-          padding: '16px 16px 8px',
-          display: 'flex', flexDirection: 'column', gap: '8px'
+          padding: '14px 14px 8px',
+          display: 'flex', flexDirection: 'column', gap: '6px'
         }}>
           {messages.length === 0 && (
             <div style={{
-              textAlign: 'center', padding: '40px 20px',
-              color: '#B0A0A0', fontSize: '13px'
+              textAlign: 'center', padding: '48px 20px',
+              color: '#C0B0B0', fontSize: '13px'
             }}>
-              <div style={{ fontSize: '40px', marginBottom: '12px' }}>💬</div>
+              <div style={{ fontSize: '36px', marginBottom: '10px' }}>💬</div>
               Start the conversation! Coordinate pickup details here.
             </div>
           )}
@@ -401,32 +384,33 @@ const hasAmount =
             const isMe = msg.sender_id === user.id;
 
             if (msg.text?.startsWith('💸 PAYMENT RELEASED') && !isBuyer) {
-  return null;
-}
+              return null;
+            }
 
-            // Proof of delivery photo message
+            // Proof of delivery
             if (msg.text?.startsWith('📦 PROOF OF DELIVERY')) {
               const photoUrl = msg.text.split('[photo]')[1];
               return (
                 <div key={msg.id} style={{
                   background: '#F0F9FF',
-                  border: '1.5px solid #BAE6FD',
-                  borderRadius: '16px', padding: '14px',
+                  border: '1px solid #BAE6FD',
+                  borderRadius: '14px', padding: '12px',
                   textAlign: 'center'
                 }}>
                   <p style={{
-                    fontSize: '12px', fontWeight: '700',
-                    color: '#0369A1', marginBottom: '10px'
+                    fontSize: '11px', fontWeight: '700',
+                    color: '#0369A1', marginBottom: '8px',
+                    textTransform: 'uppercase', letterSpacing: '0.5px'
                   }}>📦 Proof of Delivery</p>
                   <img
                     src={photoUrl} alt="Proof of delivery"
                     style={{
                       width: '100%', maxHeight: '200px',
-                      objectFit: 'cover', borderRadius: '10px'
+                      objectFit: 'cover', borderRadius: '8px'
                     }}
                   />
                   <p style={{
-                    fontSize: '11px', color: '#888',
+                    fontSize: '10px', color: '#888',
                     marginTop: '6px'
                   }}>{formatTime(msg.created_at)}</p>
                 </div>
@@ -435,13 +419,15 @@ const hasAmount =
 
             // System messages
             if (msg.text?.startsWith('💳') || msg.text?.startsWith('✅') ||
-                msg.text?.startsWith('🎉') || msg.text?.startsWith('📦 Item')) {
+                msg.text?.startsWith('🎉') || msg.text?.startsWith('📦 Item') ||
+                msg.text?.startsWith('🚨')) {
               return (
                 <div key={msg.id} style={{
-                  background: '#F8F4F4', borderRadius: '12px',
+                  background: '#F5F0F0', borderRadius: '12px',
                   padding: '10px 14px', fontSize: '12px',
                   color: '#7A6B6E', lineHeight: '1.6',
-                  fontWeight: '500', whiteSpace: 'pre-line'
+                  fontWeight: '500', whiteSpace: 'pre-line',
+                  textAlign: 'center'
                 }}>{msg.text}</div>
               );
             }
@@ -456,23 +442,26 @@ const hasAmount =
                 {!isMe && (
                   <img src={msg.users?.photo_url} alt=""
                     style={{
-                      width: '28px', height: '28px', borderRadius: '50%',
-                      flexShrink: 0, border: '1.5px solid #EDE5E5'
+                      width: '26px', height: '26px', borderRadius: '50%',
+                      flexShrink: 0, border: '1px solid #EDE5E5'
                     }}
                   />
                 )}
                 <div style={{
-                  maxWidth: '72%',
-                  background: isMe ? 'var(--maroon)' : '#F5F0F0',
+                  maxWidth: '75%',
+                  background: isMe ? 'var(--maroon)' : '#F0EBEB',
                   color: isMe ? 'white' : 'var(--text)',
-                  padding: '10px 14px',
-                  borderRadius: isMe ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
-                  fontSize: '14px', lineHeight: '1.5', fontWeight: '500'
+                  padding: '9px 13px',
+                  borderRadius: isMe
+                    ? '16px 16px 4px 16px'
+                    : '16px 16px 16px 4px',
+                  fontSize: '14px', lineHeight: '1.5',
+                  fontWeight: '500'
                 }}>
                   <p>{msg.text}</p>
                   <p style={{
-                    fontSize: '10px', opacity: 0.6,
-                    marginTop: '4px', textAlign: 'right'
+                    fontSize: '10px', opacity: 0.55,
+                    marginTop: '3px', textAlign: 'right'
                   }}>{formatTime(msg.created_at)}</p>
                 </div>
               </div>
@@ -481,15 +470,13 @@ const hasAmount =
           <div ref={bottomRef}/>
         </div>
 
-        {/* Action buttons area */}
-        <div style={{ padding: '0 16px 8px', flexShrink: 0 }}>
-
-          {/* OCR Error */}
+        {/* Action buttons */}
+        <div style={{ padding: '0 14px 6px', flexShrink: 0 }}>
           {ocrError && (
             <div style={{
-              background: '#FEF2F2', border: '1.5px solid #FECACA',
-              borderRadius: '12px', padding: '10px 14px',
-              marginBottom: '8px', fontSize: '12px',
+              background: '#FEF2F2', border: '1px solid #FECACA',
+              borderRadius: '10px', padding: '9px 12px',
+              marginBottom: '6px', fontSize: '12px',
               color: '#DC2626', fontWeight: '600'
             }}>{ocrError}</div>
           )}
@@ -500,9 +487,9 @@ const hasAmount =
             <button
               onClick={() => setShowPriceModal(true)}
               style={{
-                width: '100%', padding: '12px', borderRadius: '12px',
+                width: '100%', padding: '11px', borderRadius: '11px',
                 background: 'var(--maroon)', color: 'white',
-                fontSize: '13px', fontWeight: '700', marginBottom: '8px',
+                fontSize: '13px', fontWeight: '700', marginBottom: '6px',
                 boxShadow: 'var(--shadow-maroon)'
               }}
             >💰 Set Item Price & Request Payment</button>
@@ -511,8 +498,7 @@ const hasAmount =
           {/* Pasabuyer: Upload Receipt */}
           {!isBuyer && request?.payment_status === 'awaiting_payment' && (
             <>
-              <input
-                type="file" accept="image/*"
+              <input type="file" accept="image/*"
                 ref={receiptInputRef}
                 onChange={handleReceiptUpload}
                 style={{ display: 'none' }}
@@ -521,10 +507,10 @@ const hasAmount =
                 onClick={() => { setOcrError(''); receiptInputRef.current?.click(); }}
                 disabled={uploadingReceipt}
                 style={{
-                  width: '100%', padding: '12px', borderRadius: '12px',
+                  width: '100%', padding: '11px', borderRadius: '11px',
                   background: uploadingReceipt ? '#F0E8E8' : 'var(--green)',
                   color: uploadingReceipt ? '#C0A8A8' : 'white',
-                  fontSize: '13px', fontWeight: '700', marginBottom: '8px'
+                  fontSize: '13px', fontWeight: '700', marginBottom: '6px'
                 }}
               >
                 {uploadingReceipt ? '⏳ Verifying receipt...' : '📸 Upload GCash Receipt'}
@@ -532,13 +518,13 @@ const hasAmount =
             </>
           )}
 
-          {/* Buyer: Upload Proof of Delivery */}
+          {/* Buyer: Upload Proof */}
           {isBuyer && request?.payment_status === 'paid' &&
-  !request?.proof_photo_url &&
-  request?.status !== 'delivered' && request?.status !== 'completed' && (
+            !request?.proof_photo_url &&
+            request?.status !== 'delivered' &&
+            request?.status !== 'completed' && (
             <>
-              <input
-                type="file" accept="image/*"
+              <input type="file" accept="image/*"
                 ref={proofInputRef}
                 onChange={handleProofUpload}
                 style={{ display: 'none' }}
@@ -547,57 +533,62 @@ const hasAmount =
                 onClick={() => proofInputRef.current?.click()}
                 disabled={uploadingProof}
                 style={{
-                  width: '100%', padding: '12px', borderRadius: '12px',
+                  width: '100%', padding: '11px', borderRadius: '11px',
                   background: uploadingProof ? '#F0E8E8' : 'var(--green)',
                   color: uploadingProof ? '#C0A8A8' : 'white',
-                  fontSize: '13px', fontWeight: '700', marginBottom: '8px'
+                  fontSize: '13px', fontWeight: '700', marginBottom: '6px'
                 }}
               >
                 {uploadingProof ? '⏳ Uploading...' : '📷 Upload Proof of Delivery'}
               </button>
             </>
           )}
-{/* Raise Dispute button */}
-{!isBuyer &&
-  request?.payment_status === 'paid' &&
-  request?.status !== 'completed' &&
-  request?.status !== 'disputed' && (
-  <button
-    onClick={() => setShowDisputeModal(true)}
-    style={{
-      width: '100%', padding: '12px', borderRadius: '12px',
-      background: '#FEF2F2', color: '#DC2626',
-      border: '1.5px solid #FECACA',
-      fontSize: '13px', fontWeight: '700', marginBottom: '8px'
-    }}
-  >🚨 Raise a Dispute</button>
-)}
-          {/* Pasabuyer: I Received It */}
-          {!isBuyer && request?.proof_photo_url && request?.status !== 'completed' && request?.status !== 'disputed' && (
+
+          {/* Raise Dispute */}
+          {!isBuyer &&
+            request?.payment_status === 'paid' &&
+            request?.status !== 'completed' &&
+            request?.status !== 'disputed' && (
+            <button
+              onClick={() => setShowDisputeModal(true)}
+              style={{
+                width: '100%', padding: '11px', borderRadius: '11px',
+                background: '#FEF2F2', color: '#DC2626',
+                border: '1px solid #FECACA',
+                fontSize: '13px', fontWeight: '700', marginBottom: '6px'
+              }}
+            >🚨 Raise a Dispute</button>
+          )}
+
+          {/* I Received It */}
+          {!isBuyer &&
+            request?.proof_photo_url &&
+            request?.status !== 'completed' &&
+            request?.status !== 'disputed' && (
             <button
               onClick={handleConfirmReceived}
               style={{
-                width: '100%', padding: '12px', borderRadius: '12px',
+                width: '100%', padding: '11px', borderRadius: '11px',
                 background: 'var(--green)', color: 'white',
-                fontSize: '13px', fontWeight: '700', marginBottom: '8px'
+                fontSize: '13px', fontWeight: '700', marginBottom: '6px'
               }}
             >🎉 I Received It!</button>
           )}
         </div>
-        
 
         {/* Message input */}
         {request?.status !== 'completed' && request?.status !== 'disputed' && (
           <div style={{
-            padding: '8px 16px 24px',
+            padding: '8px 14px 24px',
             borderTop: '1px solid #F0E8E8',
-            display: 'flex', gap: '10px',
+            display: 'flex', gap: '8px',
             alignItems: 'flex-end', flexShrink: 0
           }}>
             <div style={{
-              flex: 1, background: '#F8F4F4',
-              borderRadius: '20px', padding: '10px 16px',
-              border: '2px solid transparent', transition: 'border-color 0.2s'
+              flex: 1, background: '#F5F0F0',
+              borderRadius: '18px', padding: '9px 14px',
+              border: '1.5px solid transparent',
+              transition: 'border-color 0.2s'
             }}
               onFocusCapture={e => e.currentTarget.style.borderColor = 'var(--maroon)'}
               onBlurCapture={e => e.currentTarget.style.borderColor = 'transparent'}
@@ -625,12 +616,12 @@ const hasAmount =
               onClick={sendMessage}
               disabled={!newMessage.trim() || sending}
               style={{
-                width: '44px', height: '44px', borderRadius: '50%',
-                background: newMessage.trim() ? 'var(--maroon)' : '#F0E8E8',
+                width: '42px', height: '42px', borderRadius: '50%',
+                background: newMessage.trim() ? 'var(--maroon)' : '#EDE5E5',
                 color: newMessage.trim() ? 'white' : '#C0A8A8',
-                fontSize: '18px', flexShrink: 0,
+                fontSize: '16px', flexShrink: 0,
                 boxShadow: newMessage.trim() ? 'var(--shadow-maroon)' : 'none',
-                transition: 'all 0.2s ease'
+                transition: 'all 0.18s ease'
               }}
             >➤</button>
           </div>
@@ -648,26 +639,26 @@ const hasAmount =
         }}>
           <div style={{
             background: 'white', borderRadius: '28px 28px 0 0',
-            padding: '28px 24px 40px', width: '100%',
-            animation: 'fadeUp 0.3s ease forwards'
+            padding: '24px 22px 40px', width: '100%',
+            animation: 'slideUp 0.3s ease forwards'
           }}>
             <div style={{
-              width: '36px', height: '4px', background: '#EDE5E5',
-              borderRadius: '4px', margin: '0 auto 24px'
+              width: '32px', height: '4px', background: '#EDE5E5',
+              borderRadius: '4px', margin: '0 auto 20px'
             }}/>
             <h3 style={{
               fontFamily: 'Raleway, sans-serif',
-              fontSize: '20px', fontWeight: '800',
-              color: 'var(--maroon)', marginBottom: '6px'
+              fontSize: '19px', fontWeight: '800',
+              color: 'var(--maroon)', marginBottom: '4px'
             }}>💰 Set Item Price</h3>
             <p style={{
-              color: '#B0A0A0', fontSize: '13px', marginBottom: '24px'
+              color: '#B0A0A0', fontSize: '13px', marginBottom: '20px'
             }}>Enter the actual price of the item</p>
 
             <label style={{
-              display: 'block', fontSize: '12px', fontWeight: '700',
-              color: '#5A4A4A', textTransform: 'uppercase',
-              letterSpacing: '0.6px', marginBottom: '8px'
+              display: 'block', fontSize: '11px', fontWeight: '700',
+              color: 'var(--text-soft)', textTransform: 'uppercase',
+              letterSpacing: '1px', marginBottom: '8px'
             }}>Actual Item Price (₱)</label>
 
             <input
@@ -676,10 +667,10 @@ const hasAmount =
               onChange={e => setActualPrice(e.target.value)}
               min="50"
               style={{
-                width: '100%', padding: '14px 16px',
-                borderRadius: '14px', border: '2px solid #EDE5E5',
+                width: '100%', padding: '13px 16px',
+                borderRadius: '13px', border: '1.5px solid #EDE5E5',
                 fontSize: '20px', fontWeight: '700',
-                marginBottom: '16px', background: '#FAFAFA'
+                marginBottom: '14px', background: '#FAFAFA'
               }}
               onFocus={e => e.target.style.borderColor = 'var(--maroon)'}
               onBlur={e => e.target.style.borderColor = '#EDE5E5'}
@@ -687,8 +678,9 @@ const hasAmount =
 
             {actualPrice && parseFloat(actualPrice) >= 50 && (
               <div style={{
-                background: '#F8F4F4', borderRadius: '14px',
-                padding: '14px 16px', marginBottom: '20px'
+                background: '#FAFAFA', borderRadius: '13px',
+                padding: '13px 16px', marginBottom: '18px',
+                border: '1px solid #F0E8E8'
               }}>
                 {[
                   { label: 'Item Price', value: `₱${parseFloat(actualPrice).toFixed(2)}` },
@@ -717,8 +709,8 @@ const hasAmount =
               <button
                 onClick={() => { setShowPriceModal(false); setActualPrice(''); }}
                 style={{
-                  flex: 1, padding: '14px', borderRadius: '14px',
-                  background: 'white', border: '2px solid #EDE5E5',
+                  flex: 1, padding: '13px', borderRadius: '13px',
+                  background: 'white', border: '1.5px solid #EDE5E5',
                   fontSize: '14px', fontWeight: '700', color: '#888'
                 }}
               >Cancel</button>
@@ -726,7 +718,7 @@ const hasAmount =
                 onClick={handleSetPrice}
                 disabled={!actualPrice || parseFloat(actualPrice) < 50}
                 style={{
-                  flex: 2, padding: '14px', borderRadius: '14px',
+                  flex: 2, padding: '13px', borderRadius: '13px',
                   background: (!actualPrice || parseFloat(actualPrice) < 50)
                     ? '#F0E8E8' : 'var(--maroon)',
                   color: (!actualPrice || parseFloat(actualPrice) < 50)
@@ -740,81 +732,82 @@ const hasAmount =
           </div>
         </div>
       )}
+
       {/* Dispute Modal */}
-{showDisputeModal && (
-  <div style={{
-    position: 'fixed', inset: 0,
-    background: 'rgba(0,0,0,0.5)',
-    display: 'flex', alignItems: 'flex-end',
-    justifyContent: 'center', zIndex: 200,
-    maxWidth: '480px', margin: '0 auto'
-  }}>
-    <div style={{
-      background: 'white', borderRadius: '28px 28px 0 0',
-      padding: '28px 24px 40px', width: '100%',
-      animation: 'fadeUp 0.3s ease forwards'
-    }}>
-      <div style={{
-        width: '36px', height: '4px', background: '#EDE5E5',
-        borderRadius: '4px', margin: '0 auto 24px'
-      }}/>
-      <h3 style={{
-        fontFamily: 'Raleway, sans-serif',
-        fontSize: '20px', fontWeight: '800',
-        color: '#DC2626', marginBottom: '6px'
-      }}>🚨 Raise a Dispute</h3>
-      <p style={{
-        color: '#B0A0A0', fontSize: '13px', marginBottom: '20px',
-        lineHeight: '1.6'
-      }}>
-        Describe your concern. The admin will review and respond within 8AM–10PM.
-      </p>
+      {showDisputeModal && (
+        <div style={{
+          position: 'fixed', inset: 0,
+          background: 'rgba(0,0,0,0.5)',
+          display: 'flex', alignItems: 'flex-end',
+          justifyContent: 'center', zIndex: 200,
+          maxWidth: '480px', margin: '0 auto'
+        }}>
+          <div style={{
+            background: 'white', borderRadius: '28px 28px 0 0',
+            padding: '24px 22px 40px', width: '100%',
+            animation: 'slideUp 0.3s ease forwards'
+          }}>
+            <div style={{
+              width: '32px', height: '4px', background: '#EDE5E5',
+              borderRadius: '4px', margin: '0 auto 20px'
+            }}/>
+            <h3 style={{
+              fontFamily: 'Raleway, sans-serif',
+              fontSize: '19px', fontWeight: '800',
+              color: '#DC2626', marginBottom: '4px'
+            }}>🚨 Raise a Dispute</h3>
+            <p style={{
+              color: '#B0A0A0', fontSize: '13px', marginBottom: '20px',
+              lineHeight: '1.6'
+            }}>
+              Describe your concern. The admin will review and respond within 8AM–10PM.
+            </p>
 
-      <label style={{
-        display: 'block', fontSize: '12px', fontWeight: '700',
-        color: '#5A4A4A', textTransform: 'uppercase',
-        letterSpacing: '0.6px', marginBottom: '8px'
-      }}>Reason for Dispute</label>
+            <label style={{
+              display: 'block', fontSize: '11px', fontWeight: '700',
+              color: 'var(--text-soft)', textTransform: 'uppercase',
+              letterSpacing: '1px', marginBottom: '8px'
+            }}>Reason for Dispute</label>
 
-      <textarea
-        placeholder="e.g. The buyer marked as delivered but I haven't received my item yet..."
-        value={disputeReason}
-        onChange={e => setDisputeReason(e.target.value)}
-        rows={4}
-        style={{
-          width: '100%', padding: '14px',
-          borderRadius: '14px', border: '2px solid #EDE5E5',
-          fontSize: '14px', fontWeight: '500',
-          marginBottom: '20px', background: '#FAFAFA',
-          resize: 'none', fontFamily: 'inherit', lineHeight: '1.6'
-        }}
-        onFocus={e => e.target.style.borderColor = '#DC2626'}
-        onBlur={e => e.target.style.borderColor = '#EDE5E5'}
-      />
+            <textarea
+              placeholder="e.g. The buyer marked as delivered but I haven't received my item yet..."
+              value={disputeReason}
+              onChange={e => setDisputeReason(e.target.value)}
+              rows={4}
+              style={{
+                width: '100%', padding: '13px',
+                borderRadius: '13px', border: '1.5px solid #EDE5E5',
+                fontSize: '14px', fontWeight: '500',
+                marginBottom: '18px', background: '#FAFAFA',
+                resize: 'none', fontFamily: 'inherit', lineHeight: '1.6'
+              }}
+              onFocus={e => e.target.style.borderColor = '#DC2626'}
+              onBlur={e => e.target.style.borderColor = '#EDE5E5'}
+            />
 
-      <div style={{ display: 'flex', gap: '10px' }}>
-        <button
-          onClick={() => { setShowDisputeModal(false); setDisputeReason(''); }}
-          style={{
-            flex: 1, padding: '14px', borderRadius: '14px',
-            background: 'white', border: '2px solid #EDE5E5',
-            fontSize: '14px', fontWeight: '700', color: '#888'
-          }}
-        >Cancel</button>
-        <button
-          onClick={handleRaiseDispute}
-          disabled={!disputeReason.trim()}
-          style={{
-            flex: 2, padding: '14px', borderRadius: '14px',
-            background: !disputeReason.trim() ? '#F0E8E8' : '#DC2626',
-            color: !disputeReason.trim() ? '#C0A8A8' : 'white',
-            fontSize: '14px', fontWeight: '800'
-          }}
-        >Submit Dispute</button>
-      </div>
-    </div>
-  </div>
-)}
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button
+                onClick={() => { setShowDisputeModal(false); setDisputeReason(''); }}
+                style={{
+                  flex: 1, padding: '13px', borderRadius: '13px',
+                  background: 'white', border: '1.5px solid #EDE5E5',
+                  fontSize: '14px', fontWeight: '700', color: '#888'
+                }}
+              >Cancel</button>
+              <button
+                onClick={handleRaiseDispute}
+                disabled={!disputeReason.trim()}
+                style={{
+                  flex: 2, padding: '13px', borderRadius: '13px',
+                  background: !disputeReason.trim() ? '#F0E8E8' : '#DC2626',
+                  color: !disputeReason.trim() ? '#C0A8A8' : 'white',
+                  fontSize: '14px', fontWeight: '800'
+                }}
+              >Submit Dispute</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -5,13 +5,13 @@ import logoIcon from '../logo-icon.png';
 
 export default function Profile({ user, onUpdate }) {
   const navigate = useNavigate();
-  const [stats, setStats] = useState({ asBuyer: 0, asPasabuyer: 0, completed: 0 });
+  const [stats, setStats] = useState({ asBuyer: 0, asPasabuyer: 0, completed: 0, earnings: 0 });
   const [editing, setEditing] = useState(false);
   const [phone, setPhone] = useState(user.phone || '');
   const [saving, setSaving] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
-// eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     fetchStats();
   }, []);
@@ -32,23 +32,22 @@ export default function Profile({ user, onUpdate }) {
     const pasabuyerRequests = pasabuyerRes.data || [];
     const completed = pasabuyerRequests.filter(r => r.status === 'completed').length;
 
-// Calculate total earnings from completed buyer requests
-const { data: earningsData } = await supabase
-  .from('requests')
-  .select('commission, entries(buyer_id)')
-  .eq('status', 'completed')
-  .eq('entries.buyer_id', user.id);
+    const { data: earningsData } = await supabase
+      .from('requests')
+      .select('commission, entries(buyer_id)')
+      .eq('status', 'completed')
+      .eq('entries.buyer_id', user.id);
 
-const totalEarnings = earningsData
-  ?.filter(r => r.entries)
-  ?.reduce((sum, r) => sum + (r.commission || 0), 0) || 0;
+    const totalEarnings = earningsData
+      ?.filter(r => r.entries)
+      ?.reduce((sum, r) => sum + (r.commission || 0), 0) || 0;
 
-setStats({
-  asBuyer: buyerRequests.length,
-  asPasabuyer: pasabuyerRequests.length,
-  completed,
-  earnings: totalEarnings
-});
+    setStats({
+      asBuyer: buyerRequests.length,
+      asPasabuyer: pasabuyerRequests.length,
+      completed,
+      earnings: totalEarnings
+    });
   };
 
   const handleSavePhone = async () => {
@@ -79,25 +78,34 @@ setStats({
     }}>
       {/* Header */}
       <div style={{
-        padding: '52px 24px 80px',
+        padding: '52px 24px 72px',
         position: 'relative', overflow: 'hidden'
       }}>
         <div style={{
           position: 'absolute', top: '-60px', right: '-60px',
           width: '240px', height: '240px', borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(255,229,102,0.12) 0%, transparent 65%)',
+          background: 'radial-gradient(circle, rgba(255,229,102,0.1) 0%, transparent 65%)',
           pointerEvents: 'none'
         }}/>
 
+        {/* Brand */}
         <div style={{
           display: 'flex', alignItems: 'center',
-          gap: '10px', marginBottom: '28px'
+          gap: '8px', marginBottom: '24px'
         }}>
-          <img src={logoIcon} alt="PasaBuy"
-            style={{ width: '32px', height: '32px', borderRadius: '10px' }}/>
+          <div style={{
+            width: '32px', height: '32px',
+            background: 'var(--yellow)',
+            borderRadius: '10px',
+            display: 'flex', alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <img src={logoIcon} alt="PasaBuy"
+              style={{ width: '24px', height: '24px', borderRadius: '6px' }}/>
+          </div>
           <span style={{
             fontFamily: 'Raleway, sans-serif',
-            color: 'var(--yellow)', fontSize: '18px', fontWeight: '800'
+            color: 'var(--yellow)', fontSize: '17px', fontWeight: '800'
           }}>PasaBuy</span>
         </div>
 
@@ -108,10 +116,10 @@ setStats({
               src={user.photo_url}
               alt="Profile"
               style={{
-                width: '88px', height: '88px',
+                width: '84px', height: '84px',
                 borderRadius: '50%',
                 border: '3px solid var(--yellow)',
-                boxShadow: 'var(--shadow-yellow)'
+                boxShadow: '0 8px 24px rgba(255,229,102,0.25)'
               }}
             />
             <div style={{
@@ -127,12 +135,13 @@ setStats({
           </div>
           <h2 style={{
             fontFamily: 'Raleway, sans-serif',
-            color: 'white', fontSize: '22px',
-            fontWeight: '800', marginTop: '12px'
+            color: 'white', fontSize: '20px',
+            fontWeight: '800', marginTop: '12px',
+            letterSpacing: '-0.2px'
           }}>{user.name}</h2>
           <p style={{
-            color: 'rgba(255,255,255,0.55)',
-            fontSize: '13px', marginTop: '4px'
+            color: 'rgba(255,255,255,0.5)',
+            fontSize: '13px', marginTop: '3px'
           }}>{user.email}</p>
         </div>
       </div>
@@ -141,75 +150,86 @@ setStats({
       <div style={{
         flex: 1, background: 'white',
         borderRadius: '32px 32px 0 0',
-        marginTop: '-40px',
-        padding: '28px 24px 100px',
-        boxShadow: '0 -4px 48px rgba(0,0,0,0.2)'
+        marginTop: '-36px',
+        padding: '24px 20px 100px',
+        boxShadow: '0 -8px 48px rgba(0,0,0,0.18)'
       }}>
         <div style={{
-          width: '36px', height: '4px',
+          width: '32px', height: '4px',
           background: '#EDE5E5', borderRadius: '4px',
           margin: '0 auto 24px'
         }}/>
 
-        {/* Stats row */}
+        {/* Stats grid */}
         <div style={{
-  display: 'grid',
-  gridTemplateColumns: '1fr 1fr',
-  gap: '10px',
-  marginBottom: '24px'
-}}>
-  {[
-    { label: 'As Buyer', value: stats.asBuyer, icon: '🏃' },
-    { label: 'As Pasabuyer', value: stats.asPasabuyer, icon: '🛍️' },
-    { label: 'Completed', value: stats.completed, icon: '✅' },
-    { label: 'Total Earned', value: `₱${stats.earnings || 0}`, icon: '💸' }
-  ].map((stat, i) => (
-    <div key={i} style={{
-      background: i === 3 ? 'linear-gradient(135deg, #1A6B2F, #2E9E4F)' : '#FFF8F8',
-      borderRadius: '16px', padding: '14px',
-      textAlign: 'center',
-      border: i === 3 ? 'none' : '1.5px solid #F0E8E8'
-    }}>
-      <div style={{ fontSize: '22px', marginBottom: '6px' }}>{stat.icon}</div>
-      <p style={{
-        fontFamily: 'Raleway, sans-serif',
-        fontSize: i === 3 ? '18px' : '22px',
-        fontWeight: '800',
-        color: i === 3 ? 'white' : 'var(--maroon)'
-      }}>{stat.value}</p>
-      <p style={{
-        fontSize: '10px',
-        color: i === 3 ? 'rgba(255,255,255,0.7)' : '#B0A0A0',
-        fontWeight: '700', marginTop: '2px'
-      }}>{stat.label}</p>
-    </div>
-  ))}
-</div>
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: '10px',
+          marginBottom: '20px'
+        }}>
+          {[
+            { label: 'As Buyer', value: stats.asBuyer, icon: '🏃', green: false },
+            { label: 'As Pasabuyer', value: stats.asPasabuyer, icon: '🛍️', green: false },
+            { label: 'Completed', value: stats.completed, icon: '✅', green: false },
+            { label: 'Total Earned', value: `₱${stats.earnings || 0}`, icon: '💸', green: true }
+          ].map((stat, i) => (
+            <div key={i} style={{
+              background: stat.green
+                ? 'linear-gradient(135deg, #1A6B2F, #2E9E4F)'
+                : '#FAFAFA',
+              borderRadius: '14px', padding: '14px',
+              textAlign: 'center',
+              border: stat.green ? 'none' : '1px solid #F0E8E8'
+            }}>
+              <div style={{ fontSize: '20px', marginBottom: '6px' }}>{stat.icon}</div>
+              <p style={{
+                fontFamily: 'Raleway, sans-serif',
+                fontSize: stat.green ? '18px' : '22px',
+                fontWeight: '800',
+                color: stat.green ? 'white' : 'var(--maroon)'
+              }}>{stat.value}</p>
+              <p style={{
+                fontSize: '10px',
+                color: stat.green ? 'rgba(255,255,255,0.7)' : '#B0A0A0',
+                fontWeight: '700', marginTop: '2px'
+              }}>{stat.label}</p>
+            </div>
+          ))}
+        </div>
 
-        {/* Contact number */}
+        {/* GCash Number */}
         <div style={{
           background: '#FAFAFA',
-          borderRadius: '18px',
-          padding: '16px 18px',
-          marginBottom: '12px',
-          border: '1.5px solid #F0E8E8'
+          borderRadius: '16px',
+          padding: '14px 16px',
+          marginBottom: '10px',
+          border: '1px solid #F0E8E8'
         }}>
           <div style={{
             display: 'flex', justifyContent: 'space-between',
-            alignItems: 'center', marginBottom: editing ? '12px' : '0'
+            alignItems: 'center',
+            marginBottom: editing ? '12px' : '0'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <span style={{ fontSize: '20px' }}>📱</span>
+              <div style={{
+                width: '36px', height: '36px',
+                background: '#FFF0F0',
+                borderRadius: '10px',
+                display: 'flex', alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '18px'
+              }}>📱</div>
               <div>
                 <p style={{
-                  fontSize: '11px', color: '#B0A0A0',
+                  fontSize: '10px', color: '#B0A0A0',
                   fontWeight: '700', textTransform: 'uppercase',
-                  letterSpacing: '0.5px'
+                  letterSpacing: '0.7px'
                 }}>GCash Number</p>
                 {!editing && (
                   <p style={{
                     fontSize: '15px', fontWeight: '700',
-                    color: 'var(--text)', marginTop: '2px'
+                    color: 'var(--text)', marginTop: '2px',
+                    letterSpacing: '0.5px'
                   }}>{user.phone}</p>
                 )}
               </div>
@@ -218,12 +238,12 @@ setStats({
               <button
                 onClick={() => setEditing(true)}
                 style={{
-                  background: '#FFF0F0',
+                  background: 'white',
                   color: 'var(--maroon)',
                   padding: '6px 14px',
                   borderRadius: '100px',
                   fontSize: '12px', fontWeight: '700',
-                  border: '1.5px solid #FECACA'
+                  border: '1px solid #FECACA'
                 }}
               >Edit</button>
             )}
@@ -238,26 +258,26 @@ setStats({
                 autoComplete="off"
                 style={{
                   width: '100%', padding: '12px 14px',
-                  borderRadius: '12px',
-                  border: '2px solid var(--maroon)',
+                  borderRadius: '11px',
+                  border: '1.5px solid var(--maroon)',
                   fontSize: '16px', fontWeight: '700',
-                  letterSpacing: '1px', marginBottom: '10px',
+                  letterSpacing: '1.5px', marginBottom: '8px',
                   background: 'white'
                 }}
               />
               <p style={{
-  fontSize: '11px', color: '#B0A0A0',
-  marginTop: '1px', lineHeight: '1.5', marginBottom: '10px'
-}}>
-  This is where your earnings will be transferred after each completed transaction.
-</p>
+                fontSize: '11px', color: '#B0A0A0',
+                lineHeight: '1.5', marginBottom: '10px'
+              }}>
+                💡 Your earnings will be transferred here after each completed transaction.
+              </p>
               <div style={{ display: 'flex', gap: '8px' }}>
                 <button
                   onClick={() => { setEditing(false); setPhone(user.phone); }}
                   style={{
                     flex: 1, padding: '10px',
                     borderRadius: '10px', background: 'white',
-                    border: '1.5px solid #EDE5E5',
+                    border: '1px solid #EDE5E5',
                     fontSize: '13px', fontWeight: '700', color: '#888'
                   }}
                 >Cancel</button>
@@ -279,9 +299,9 @@ setStats({
 
         {/* Account info */}
         <div style={{
-          background: '#FAFAFA', borderRadius: '18px',
-          padding: '16px 18px', marginBottom: '12px',
-          border: '1.5px solid #F0E8E8'
+          background: '#FAFAFA', borderRadius: '16px',
+          padding: '14px 16px', marginBottom: '12px',
+          border: '1px solid #F0E8E8'
         }}>
           {[
             { icon: '📧', label: 'Email', value: user.email },
@@ -295,15 +315,22 @@ setStats({
               marginBottom: i < 2 ? '12px' : '0',
               borderBottom: i < 2 ? '1px solid #F0E8E8' : 'none'
             }}>
-              <span style={{ fontSize: '18px' }}>{item.icon}</span>
+              <div style={{
+                width: '34px', height: '34px',
+                background: '#F5F0F0',
+                borderRadius: '9px',
+                display: 'flex', alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '16px', flexShrink: 0
+              }}>{item.icon}</div>
               <div>
                 <p style={{
-                  fontSize: '11px', color: '#B0A0A0',
+                  fontSize: '10px', color: '#B0A0A0',
                   fontWeight: '700', textTransform: 'uppercase',
-                  letterSpacing: '0.5px'
+                  letterSpacing: '0.7px'
                 }}>{item.label}</p>
                 <p style={{
-                  fontSize: '14px', fontWeight: '600',
+                  fontSize: '13px', fontWeight: '600',
                   color: 'var(--text)', marginTop: '2px'
                 }}>{item.value}</p>
               </div>
@@ -311,64 +338,54 @@ setStats({
           ))}
         </div>
 
-        {/* My Entries button */}
-        <button
-          onClick={() => navigate('/')}
-          style={{
-            width: '100%', padding: '14px',
-            borderRadius: '14px',
-            background: '#F8F4F4',
-            color: 'var(--text)',
-            border: '1.5px solid #EDE5E5',
-            fontSize: '14px', fontWeight: '700',
-            display: 'flex', alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: '12px'
-          }}
-        >
-          <span>🏠 Go to Home Feed</span>
-          <span style={{ color: '#B0A0A0' }}>→</span>
-        </button>
-
-        <button
-          onClick={() => navigate('/my-requests')}
-          style={{
-            width: '100%', padding: '14px',
-            borderRadius: '14px',
-            background: '#F8F4F4',
-            color: 'var(--text)',
-            border: '1.5px solid #EDE5E5',
-            fontSize: '14px', fontWeight: '700',
-            display: 'flex', alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: '24px'
-          }}
-        >
-          <span>📋 My Requests</span>
-          <span style={{ color: '#B0A0A0' }}>→</span>
-        </button>
+        {/* Nav buttons */}
+        {[
+          { icon: '🏠', label: 'Go to Home Feed', path: '/' },
+          { icon: '📋', label: 'My Requests', path: '/my-requests' }
+        ].map((btn, i) => (
+          <button
+            key={i}
+            onClick={() => navigate(btn.path)}
+            style={{
+              width: '100%', padding: '13px 16px',
+              borderRadius: '13px',
+              background: '#FAFAFA',
+              color: 'var(--text)',
+              border: '1px solid #EDE5E5',
+              fontSize: '13px', fontWeight: '700',
+              display: 'flex', alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: '10px'
+            }}
+          >
+            <span>{btn.icon} {btn.label}</span>
+            <span style={{ color: '#C0B0B0', fontSize: '16px' }}>→</span>
+          </button>
+        ))}
 
         {/* Logout */}
         {!showLogoutConfirm ? (
           <button
             onClick={() => setShowLogoutConfirm(true)}
             style={{
-              width: '100%', padding: '14px',
-              borderRadius: '14px',
+              width: '100%', padding: '13px',
+              borderRadius: '13px',
               background: '#FEF2F2',
               color: '#DC2626',
-              border: '1.5px solid #FECACA',
-              fontSize: '14px', fontWeight: '700'
+              border: '1px solid #FECACA',
+              fontSize: '13px', fontWeight: '700',
+              marginTop: '4px'
             }}
           >🚪 Log Out</button>
         ) : (
           <div style={{
             background: '#FEF2F2',
-            border: '1.5px solid #FECACA',
-            borderRadius: '16px', padding: '16px'
+            border: '1px solid #FECACA',
+            borderRadius: '14px', padding: '16px',
+            marginTop: '4px'
           }}>
             <p style={{
-              fontSize: '14px', fontWeight: '700',
+              fontSize: '13px', fontWeight: '700',
               color: '#DC2626', marginBottom: '12px',
               textAlign: 'center'
             }}>Are you sure you want to log out?</p>
@@ -376,16 +393,16 @@ setStats({
               <button
                 onClick={() => setShowLogoutConfirm(false)}
                 style={{
-                  flex: 1, padding: '11px',
+                  flex: 1, padding: '10px',
                   borderRadius: '10px', background: 'white',
-                  border: '1.5px solid #EDE5E5',
+                  border: '1px solid #EDE5E5',
                   fontSize: '13px', fontWeight: '700', color: '#888'
                 }}
               >Cancel</button>
               <button
                 onClick={handleLogout}
                 style={{
-                  flex: 2, padding: '11px',
+                  flex: 2, padding: '10px',
                   borderRadius: '10px',
                   background: '#DC2626', color: 'white',
                   fontSize: '13px', fontWeight: '800'
@@ -404,7 +421,7 @@ setStats({
         background: 'white', borderTop: '1px solid #F0E8E8',
         display: 'flex', justifyContent: 'space-around',
         padding: '10px 0 20px', zIndex: 100,
-        boxShadow: '0 -4px 24px rgba(0,0,0,0.08)'
+        boxShadow: '0 -4px 24px rgba(0,0,0,0.06)'
       }}>
         {[
           { icon: '🏠', label: 'Home', path: '/' },
@@ -422,7 +439,7 @@ setStats({
                 gap: '3px', padding: '6px 20px', borderRadius: '12px'
               }}
             >
-              <span style={{ fontSize: '22px' }}>{item.icon}</span>
+              <span style={{ fontSize: '20px' }}>{item.icon}</span>
               <span style={{
                 fontSize: '10px', fontWeight: '700',
                 color: active ? 'var(--maroon)' : '#C0B0B0',
