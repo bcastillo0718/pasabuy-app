@@ -9,11 +9,11 @@ export default function PostEntry({ user }) {
   const [whatCanBuy, setWhatCanBuy] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [expiresAt, setExpiresAt] = useState('');
+  const [selectedDuration, setSelectedDuration] = useState(null);
   const navigate = useNavigate();
 
   const handleSubmit = async () => {
-    if (!location || !whatCanBuy || !expiresAt) {
+    if (!location || !whatCanBuy || !selectedDuration) {
       setError('Please fill in all fields');
       return;
     }
@@ -27,7 +27,7 @@ export default function PostEntry({ user }) {
         location,
         what_can_buy: whatCanBuy,
         status: 'active',
-        expires_at: expiresAt || null
+        expires_at: new Date(Date.now() + selectedDuration * 60000).toISOString()
       });
 
     if (error) {
@@ -58,7 +58,7 @@ const fields = [
     },
   ];
 
-  const isValid = location && whatCanBuy && expiresAt;
+  const isValid = location && whatCanBuy && selectedDuration;
 
   return (
     <div style={{
@@ -241,57 +241,51 @@ const fields = [
           </div>
         ))}
 
+
 {/* Expiry time */}
-        <div style={{ marginBottom: '20px' }}>
-          <label style={{
-            display: 'flex', alignItems: 'center',
-            gap: '6px',
-            fontSize: '11px', fontWeight: '700',
-            color: 'var(--text-soft)',
-            textTransform: 'uppercase',
-            letterSpacing: '1px',
-            marginBottom: '8px'
-          }}>
-            <span style={{ color: 'var(--maroon)', display: 'flex', alignItems: 'center' }}>
-              ⏱️
-            </span>
-            Accepting requests until
-          </label>
-          <input
-            type="time"
-            value={expiresAt}
-            onChange={e => {
-              const today = new Date().toISOString().split('T')[0];
-              setExpiresAt(`${today}T${e.target.value}:00`);
-            }}
-            style={{
-              width: '100%',
-              padding: '13px 16px',
-              borderRadius: '13px',
-              border: '1.5px solid #EDE5E5',
-              fontSize: '14px',
-              fontWeight: '500',
-              color: 'var(--text)',
-              background: '#FAFAFA',
-              transition: 'all 0.2s ease'
-            }}
-            onFocus={e => {
-              e.target.style.borderColor = 'var(--maroon)';
-              e.target.style.background = 'white';
-              e.target.style.boxShadow = '0 0 0 3px rgba(139,0,0,0.06)';
-            }}
-            onBlur={e => {
-              e.target.style.borderColor = '#EDE5E5';
-              e.target.style.background = '#FAFAFA';
-              e.target.style.boxShadow = 'none';
-            }}
-          />
-          <p style={{
-            fontSize: '11px', color: '#B0A0A0',
-            marginTop: '5px', paddingLeft: '2px',
-            lineHeight: '1.5'
-          }}>Entry will automatically end at this time</p>
-        </div>
+<div style={{ marginBottom: '20px' }}>
+  <label style={{
+    display: 'flex', alignItems: 'center',
+    gap: '6px',
+    fontSize: '11px', fontWeight: '700',
+    color: 'var(--text-soft)',
+    textTransform: 'uppercase',
+    letterSpacing: '1px',
+    marginBottom: '8px'
+  }}>
+    ⏱️ How long will you be out?
+  </label>
+  <div style={{
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gap: '8px'
+  }}>
+    {[
+      { label: '30 mins', minutes: 30 },
+      { label: '1 hour', minutes: 60 },
+      { label: '2 hours', minutes: 120 },
+      { label: '3 hours', minutes: 180 },
+    ].map((option) => (
+      <button
+        key={option.minutes}
+        onClick={() => setSelectedDuration(option.minutes)}
+        style={{
+          padding: '12px',
+          borderRadius: '12px',
+          border: `1.5px solid ${selectedDuration === option.minutes ? 'var(--maroon)' : '#EDE5E5'}`,
+          background: selectedDuration === option.minutes ? '#FFF0F0' : '#FAFAFA',
+          color: selectedDuration === option.minutes ? 'var(--maroon)' : 'var(--text)',
+          fontSize: '13px', fontWeight: '700',
+          transition: 'all 0.18s ease'
+        }}
+      >{option.label}</button>
+    ))}
+  </div>
+  <p style={{
+    fontSize: '11px', color: '#B0A0A0',
+    marginTop: '8px', lineHeight: '1.5'
+  }}>Entry will automatically end after selected duration</p>
+</div>
 
         {/* Error */}
         {error && (
