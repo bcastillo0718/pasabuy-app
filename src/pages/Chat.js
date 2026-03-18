@@ -25,6 +25,7 @@ const [rating, setRating] = useState(0);
 const [ratingComment, setRatingComment] = useState('');
 const [hasRated, setHasRated] = useState(false);
 const [submittingRating, setSubmittingRating] = useState(false);
+const [canCancel, setCanCancel] = useState(false);
   const bottomRef = useRef(null);
   const receiptInputRef = useRef(null);
   const proofInputRef = useRef(null);
@@ -59,6 +60,19 @@ const [submittingRating, setSubmittingRating] = useState(false);
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+  useEffect(() => {
+  if (!request?.payment_requested_at || request?.payment_status !== 'awaiting_payment') return;
+
+  const checkTimer = () => {
+    const requestedAt = new Date(request.payment_requested_at);
+    const diff = (new Date() - requestedAt) / 60000;
+    setCanCancel(diff >= 15);
+  };
+
+  checkTimer();
+  const interval = setInterval(checkTimer, 30000);
+  return () => clearInterval(interval);
+}, [request]);
 
   const fetchRequest = async () => {
     const { data } = await supabase
@@ -118,7 +132,8 @@ const checkIfRated = async () => {
       actual_price: parseFloat(actualPrice),
       commission,
       total_amount: total,
-      payment_status: 'awaiting_payment'
+      payment_status: 'awaiting_payment',
+      payment_requested_at: new Date().toISOString()
     }).eq('id', requestId);
 
     await supabase.from('messages').insert({
@@ -538,6 +553,47 @@ await supabase.from('ratings').insert({
               marginBottom: '6px', fontSize: '12px',
               color: '#DC2626', fontWeight: '600'
             }}>{ocrError}</div>
+          )}
+
+          {/* Payment timeout note + cancel button */}
+          {isBuyer && request?.payment_status === 'awaiting_payment' && (
+            <div style={{
+              background: '#FFF8E8',
+              border: '1px solid #FDE68A',
+              borderRadius: '10px', padding: '9px 12px',
+              marginBottom: '6px'
+            }}>
+              <p style={{
+                fontSize: '11px', color: '#92400E',
+                fontWeight: '500', lineHeight: '1.5'
+              }}>
+                ⚠️ To prevent buyers waiting indefinitely, you may cancel this request after 15 minutes of no payment.
+              </p>
+              {canCancel && (
+                <button
+                  onClick={async () => {
+                    await supabase.from('requests').update({
+                      status: 'cancelled',
+                      payment_status: 'cancelled'
+                    }).eq('id', requestId);
+                    await supabase.from('messages').insert({
+                      request_id: requestId,
+                      sender_id: user.id,
+                      text: `❌ Request cancelled due to no payment received after 15 minutes.`
+                    });
+                    fetchRequest();
+                  }}
+                  style={{
+                    width: '100%', padding: '9px',
+                    borderRadius: '9px',
+                    background: '#FEF2F2', color: '#DC2626',
+                    border: '1px solid #FECACA',
+                    fontSize: '12px', fontWeight: '700',
+                    marginTop: '8px'
+                  }}
+                >❌ Cancel Request (No Payment Received)</button>
+              )}
+            </div>
           )}
 
           {/* Buyer: Set Price */}
