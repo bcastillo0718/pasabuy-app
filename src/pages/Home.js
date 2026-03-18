@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
 import logoIcon from '../logo-icon.png';
 import { Home, ClipboardList, User } from 'lucide-react';
-import { Home, ClipboardList, User, MapPin, ShoppingBag } from 'lucide-react';
+import { Home as HomeIcon, ClipboardList, User, MapPin, ShoppingBag } from 'lucide-react';
 
 export default function Home({ user }) {
   const [entries, setEntries] = useState([]);
@@ -383,7 +383,7 @@ export default function Home({ user }) {
         boxShadow: '0 -4px 24px rgba(0,0,0,0.06)'
       }}>
         {[
-          { icon: <Home size={22} strokeWidth={2}/>, label: 'Home', path: '/' },
+          { icon: <HomeIcon size={22} strokeWidth={2}/>, label: 'Home', path: '/' },
           { icon: <ClipboardList size={22} strokeWidth={2}/>, label: 'Requests', path: '/my-requests' },
           { icon: <User size={22} strokeWidth={2}/>, label: 'Profile', path: '/profile' }
         ].map(item => {
