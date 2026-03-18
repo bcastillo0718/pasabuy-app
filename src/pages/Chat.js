@@ -19,6 +19,11 @@ export default function Chat({ user }) {
   const [ocrError, setOcrError] = useState('');
   const [showDisputeModal, setShowDisputeModal] = useState(false);
   const [disputeReason, setDisputeReason] = useState('');
+  const [showRatingModal, setShowRatingModal] = useState(false);
+const [rating, setRating] = useState(0);
+const [ratingComment, setRatingComment] = useState('');
+const [hasRated, setHasRated] = useState(false);
+const [submittingRating, setSubmittingRating] = useState(false);
   const bottomRef = useRef(null);
   const receiptInputRef = useRef(null);
   const proofInputRef = useRef(null);
@@ -71,6 +76,17 @@ export default function Chat({ user }) {
       setEntry(entryData);
     }
     setLoading(false);
+    checkIfRated();
+  };
+
+  const checkIfRated = async () => {
+    const { data } = await supabase
+      .from('ratings')
+      .select('id')
+      .eq('request_id', requestId)
+      .eq('rater_id', user.id)
+      .single();
+    setHasRated(!!data);
   };
 
   const fetchMessages = async () => {
@@ -236,6 +252,40 @@ export default function Chat({ user }) {
     setDisputeReason('');
     fetchRequest();
   };
+
+  const handleSubmitRating = async () => {
+  if (rating === 0) return;
+  setSubmittingRating(true);
+
+  const ratedId = isBuyer
+    ? request?.pasabuyer_id
+    : entry?.buyer_id;
+
+  await supabase.from('ratings').insert({
+    request_id: requestId,
+    rater_id: user.id,
+    rated_id: ratedId,
+    rating,
+    comment: ratingComment.trim() || null
+  });
+
+  // Update user's average rating
+  const { data: allRatings } = await supabase
+    .from('ratings')
+    .select('rating')
+    .eq('rated_id', ratedId);
+
+  const avg = allRatings?.reduce((sum, r) => sum + r.rating, 0) / allRatings?.length;
+
+  await supabase.from('users').update({
+    avg_rating: Math.round(avg * 10) / 10,
+    total_ratings: allRatings?.length
+  }).eq('id', ratedId);
+
+  setHasRated(true);
+  setShowRatingModal(false);
+  setSubmittingRating(false);
+};
 
   const handleConfirmReceived = async () => {
     await supabase.from('requests').update({ status: 'completed' }).eq('id', requestId);
@@ -574,6 +624,25 @@ export default function Chat({ user }) {
               }}
             >🎉 I Received It!</button>
           )}
+          {/* Rate button — shows after completed */}
+          {request?.status === 'completed' && !hasRated && (
+            <button
+              onClick={() => setShowRatingModal(true)}
+              style={{
+                width: '100%', padding: '11px', borderRadius: '11px',
+                background: 'var(--yellow)', color: 'var(--maroon)',
+                fontSize: '13px', fontWeight: '700', marginBottom: '6px',
+                boxShadow: '0 4px 12px rgba(255,229,102,0.3)'
+              }}
+            >⭐ Rate this Transaction</button>
+          )}
+
+          {request?.status === 'completed' && hasRated && (
+            <div style={{
+              textAlign: 'center', padding: '10px',
+              color: '#16A34A', fontSize: '13px', fontWeight: '700'
+            }}>✅ You've already rated this transaction</div>
+          )}
         </div>
 
         {/* Message input */}
@@ -804,6 +873,121 @@ export default function Chat({ user }) {
                   fontSize: '14px', fontWeight: '800'
                 }}
               >Submit Dispute</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+
+ {/* Rating Modal */}
+      {showRatingModal && (
+        <div style={{
+          position: 'fixed', inset: 0,
+          background: 'rgba(0,0,0,0.5)',
+          display: 'flex', alignItems: 'flex-end',
+          justifyContent: 'center', zIndex: 200,
+          maxWidth: '480px', margin: '0 auto'
+        }}>
+          <div style={{
+            background: 'white', borderRadius: '28px 28px 0 0',
+            padding: '24px 22px 40px', width: '100%',
+            animation: 'slideUp 0.3s ease forwards'
+          }}>
+            <div style={{
+              width: '32px', height: '4px', background: '#EDE5E5',
+              borderRadius: '4px', margin: '0 auto 20px'
+            }}/>
+
+            <h3 style={{
+              fontFamily: 'Raleway, sans-serif',
+              fontSize: '19px', fontWeight: '800',
+              color: 'var(--text)', marginBottom: '4px'
+            }}>⭐ Rate this Transaction</h3>
+            <p style={{
+              color: '#B0A0A0', fontSize: '13px',
+              marginBottom: '24px', lineHeight: '1.6'
+            }}>
+              How was your experience with{' '}
+              <strong>{isBuyer ? request?.pasabuyer?.name : entry?.users?.name}</strong>?
+            </p>
+
+            {/* Star selector */}
+            <div style={{
+              display: 'flex', justifyContent: 'center',
+              gap: '12px', marginBottom: '20px'
+            }}>
+              {[1, 2, 3, 4, 5].map(star => (
+                <button
+                  key={star}
+                  onClick={() => setRating(star)}
+                  style={{
+                    fontSize: '36px',
+                    background: 'none',
+                    transform: rating >= star ? 'scale(1.2)' : 'scale(1)',
+                    filter: rating >= star ? 'none' : 'grayscale(1)',
+                    transition: 'all 0.15s ease'
+                  }}
+                >⭐</button>
+              ))}
+            </div>
+
+            {/* Rating label */}
+            {rating > 0 && (
+              <p style={{
+                textAlign: 'center', fontWeight: '700',
+                fontSize: '14px', marginBottom: '16px',
+                color: rating >= 4 ? '#16A34A' : rating >= 3 ? '#D97706' : '#DC2626'
+              }}>
+                {rating === 5 ? '🎉 Excellent!' :
+                 rating === 4 ? '😊 Great!' :
+                 rating === 3 ? '😐 Okay' :
+                 rating === 2 ? '😕 Not great' :
+                 '😞 Poor'}
+              </p>
+            )}
+
+            {/* Comment */}
+            <label style={{
+              display: 'block', fontSize: '11px', fontWeight: '700',
+              color: 'var(--text-soft)', textTransform: 'uppercase',
+              letterSpacing: '1px', marginBottom: '8px'
+            }}>Comment (optional)</label>
+            <textarea
+              placeholder="Share your experience..."
+              value={ratingComment}
+              onChange={e => setRatingComment(e.target.value)}
+              rows={3}
+              style={{
+                width: '100%', padding: '13px',
+                borderRadius: '13px', border: '1.5px solid #EDE5E5',
+                fontSize: '14px', fontWeight: '500',
+                marginBottom: '18px', background: '#FAFAFA',
+                resize: 'none', fontFamily: 'inherit', lineHeight: '1.6'
+              }}
+              onFocus={e => e.target.style.borderColor = 'var(--maroon)'}
+              onBlur={e => e.target.style.borderColor = '#EDE5E5'}
+            />
+
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button
+                onClick={() => { setShowRatingModal(false); setRating(0); setRatingComment(''); }}
+                style={{
+                  flex: 1, padding: '13px', borderRadius: '13px',
+                  background: 'white', border: '1.5px solid #EDE5E5',
+                  fontSize: '14px', fontWeight: '700', color: '#888'
+                }}
+              >Cancel</button>
+              <button
+                onClick={handleSubmitRating}
+                disabled={rating === 0 || submittingRating}
+                style={{
+                  flex: 2, padding: '13px', borderRadius: '13px',
+                  background: rating === 0 ? '#F0E8E8' : 'var(--maroon)',
+                  color: rating === 0 ? '#C0A8A8' : 'white',
+                  fontSize: '14px', fontWeight: '800',
+                  boxShadow: rating === 0 ? 'none' : 'var(--shadow-maroon)'
+                }}
+              >{submittingRating ? '⏳ Submitting...' : 'Submit Rating'}</button>
             </div>
           </div>
         </div>
