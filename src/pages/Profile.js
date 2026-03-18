@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
 import logoIcon from '../logo-icon.png';
-import { Home, ClipboardList, User } from 'lucide-react';
+
 import { Home as HomeIcon, ClipboardList, User, Mail, GraduationCap, Calendar, Smartphone } from 'lucide-react';
 
 export default function Profile({ user, onUpdate }) {

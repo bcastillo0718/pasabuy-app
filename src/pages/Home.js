@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
 import logoIcon from '../logo-icon.png';
-import { Home, ClipboardList, User } from 'lucide-react';
+
 import { Home as HomeIcon, ClipboardList, User, MapPin, ShoppingBag } from 'lucide-react';
 
 export default function Home({ user }) {
