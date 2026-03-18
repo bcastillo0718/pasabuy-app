@@ -8,7 +8,7 @@ export default function ProfileSetup({ session, onComplete }) {
   const [error, setError] = useState('');
   const [focused, setFocused] = useState(false);
   const [step, setStep] = useState('agreement');
-const [hasScrolled, setHasScrolled] = useState(false);
+   
 
   const handleSubmit = async () => {
     if (!phone || phone.length < 11) {
@@ -61,7 +61,7 @@ const rules = [
     'Failure to deliver accepted items without valid reason will result in a strike.'
   ]},
   { category: 'For Pasabuyers', items: [
-    'You must pay the exact amount requested within 15 minutes of receiving the payment request.',
+    'You must pay the exact amount requested within 15 minutes of receiving the payment request. Failure to do this, the buyer will have option to cancel the request',
     'You must upload a valid GCash receipt as proof of payment.',
     'Raising false disputes will result in a strike.'
   ]},
@@ -73,16 +73,16 @@ const rules = [
   { category: 'Violations & Penalties', items: [
     'Users who receive 3 strikes will be automatically suspended.',
     'Suspended accounts may appeal to the admin.',
-    'PasaBuy reserves the right to suspend accounts without prior notice for serious violations.'
+    'PasaBuy App reserves the right to suspend accounts without prior notice for serious violations.'
   ]},
   { category: 'Privacy & Safety', items: [
     'Do not share your personal information in the chat.',
-    'Do not use PasaBuy for illegal items or substances.',
-    'Do not use PasaBuy for items that are prohibited on campus.',
+    'Do not use PasaBuy App for illegal items or substances.',
+    'Do not use PasaBuy App for items that are prohibited.',
     'Your GCash number is only used for receiving earnings and will not be shared publicly.'
   ]},
   { category: 'Chat & Communication', items: [
-    'Keep all communication within the PasaBuy chat only.',
+    'Keep all communication within the PasaBuy App chat only.',
     'Do not share external contact details in the chat.',
     'Do not send inappropriate, offensive or threatening messages in the chat.',
     'Screenshots of private conversations used to harass other users will result in suspension.'
@@ -95,19 +95,19 @@ const rules = [
   { category: 'Items & Transactions', items: [
     'Buyers can only purchase items within their stated location.',
     'Items must be delivered in the same condition as purchased.',
-    'PasaBuy is not responsible for damaged or incorrect items unless proven to be the buyer\'s fault.',
-    'Do not use PasaBuy to resell items at a higher price outside of the 15% commission.'
+    'PasaBuy App is not responsible for damaged or incorrect items unless proven to be the buyer\'s fault.',
+    'Do not use PasaBuy App to resell items at a higher price outside of the 15% commission.'
   ]},
   { category: 'Account', items: [
-    'Each person is only allowed one PasaBuy account.',
+    'Each person is only allowed one PasaBuy App account.',
     'Sharing accounts with other users is strictly prohibited.',
-    'PasaBuy reserves the right to modify these rules at any time.',
+    'PasaBuy App reserves the right to modify these rules at any time.',
     'Continued use of the app means you agree to any updated rules.'
   ]},
   { category: 'Disclaimer', items: [
-    'PasaBuy is a peer-to-peer errand sharing platform and is not responsible for any loss, damage or disputes arising from transactions between users.',
+    'PasaBuy App is a peer-to-peer errand sharing platform and is not responsible for any loss, damage or disputes arising from transactions between users.',
     'All disputes will be handled fairly by the admin based on available evidence.',
-    'PasaBuy operates daily from 8AM to 10PM only. Transactions outside these hours are at the users\'s own risk.'
+    'PasaBuy App operates daily from 8AM to 10PM only. Transactions outside these hours are at the users\'s own risk.'
   ]}
 ];
 
@@ -227,11 +227,8 @@ const rules = [
 
             {/* Rules scroll area */}
             <div
-              onScroll={e => {
-                const el = e.currentTarget;
-                const isAtBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 50;
-                if (isAtBottom) setHasScrolled(true);
-              }}
+            
+              
               style={{
                 flex: 1, overflowY: 'auto',
                 marginBottom: '16px',
@@ -274,25 +271,19 @@ const rules = [
 
             {/* Agree button */}
             <div style={{ flexShrink: 0 }}>
-              {!hasScrolled && (
-                <p style={{
-                  textAlign: 'center', fontSize: '11px',
-                  color: '#B0A0A0', marginBottom: '8px'
-                }}>Scroll to the bottom to continue</p>
-              )}
+              
               <button
                 onClick={() => setStep('profile')}
-                disabled={!hasScrolled}
                 style={{
-                  width: '100%', padding: '15px',
-                  borderRadius: '14px',
-                  background: !hasScrolled ? '#F0E8E8' : 'var(--maroon)',
-                  color: !hasScrolled ? '#C0A8A8' : 'white',
+                width: '100%', padding: '15px',
+                borderRadius: '14px',
+                background: 'var(--maroon)',
+                color: 'white',
                   fontSize: '14px', fontWeight: '800',
-                  boxShadow: !hasScrolled ? 'none' : 'var(--shadow-maroon)',
+                  boxShadow: 'var(--shadow-maroon)',
                   transition: 'all 0.2s ease'
                 }}
-              >I Agree to the Community Rules →</button>
+              >I Agree to the Community Rules</button>
             </div>
           </>
         ) : (
