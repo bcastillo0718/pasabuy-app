@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabase';
 import { useNavigate, useParams } from 'react-router-dom';
 import logoIcon from '../logo-icon.png';
+import { ArrowLeft, ShoppingBag, Send } from 'lucide-react';
 
 export default function Chat({ user }) {
   const { requestId } = useParams();
@@ -354,11 +355,12 @@ await supabase.from('ratings').insert({
             style={{
               background: 'rgba(255,255,255,0.1)',
               color: 'white', padding: '8px 14px',
-              borderRadius: '100px', fontSize: '13px',
-              fontWeight: '600', flexShrink: 0,
-              border: '1px solid rgba(255,255,255,0.12)'
+              borderRadius: '100px',
+              flexShrink: 0,
+              border: '1px solid rgba(255,255,255,0.12)',
+              display: 'flex', alignItems: 'center'
             }}
-          >←</button>
+          ><ArrowLeft size={16} strokeWidth={2}/></button>
 
           <img
             src={isBuyer ? request?.pasabuyer?.photo_url : entry?.users?.photo_url}
@@ -378,8 +380,12 @@ await supabase.from('ratings').insert({
             </p>
             <p style={{
               color: 'rgba(255,255,255,0.5)',
-              fontSize: '11px', marginTop: '1px'
-            }}>🛍️ {request?.item_name}</p>
+              fontSize: '11px', marginTop: '1px',
+              display: 'flex', alignItems: 'center', gap: '4px'
+            }}>
+              <ShoppingBag size={11} strokeWidth={2}/>
+              {request?.item_name}
+            </p>
           </div>
           <div style={{
             width: '28px', height: '28px',
@@ -695,7 +701,7 @@ await supabase.from('ratings').insert({
                 boxShadow: newMessage.trim() ? 'var(--shadow-maroon)' : 'none',
                 transition: 'all 0.18s ease'
               }}
-            >➤</button>
+            ><Send size={15} strokeWidth={2}/></button>
           </div>
         )}
       </div>

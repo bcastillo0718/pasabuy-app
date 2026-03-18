@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { useNavigate, useParams } from 'react-router-dom';
 import logoIcon from '../logo-icon.png';
+import { MapPin, ShoppingBag, ArrowLeft } from 'lucide-react';
 
 export default function EntryDetail({ user }) {
   const { id } = useParams();
@@ -262,8 +263,8 @@ export default function EntryDetail({ user }) {
           border: '1px solid #F0E8E8'
         }}>
           {[
-            { icon: '📍', label: 'Going to', value: entry?.location },
-            { icon: '🛍️', label: 'Can buy', value: entry?.what_can_buy },
+            { icon: <MapPin size={16} strokeWidth={2}/>, label: 'Going to', value: entry?.location },
+            { icon: <ShoppingBag size={16} strokeWidth={2}/>, label: 'Can buy', value: entry?.what_can_buy },
           ].map((item, i) => (
             <div key={i} style={{
               display: 'flex', gap: '12px',
@@ -271,7 +272,12 @@ export default function EntryDetail({ user }) {
               marginBottom: i === 0 ? '12px' : '0',
               borderBottom: i === 0 ? '1px solid #F0E8E8' : 'none'
             }}>
-              <span style={{ fontSize: '16px', marginTop: '1px' }}>{item.icon}</span>
+              <span style={{
+                color: 'var(--maroon)',
+                marginTop: '1px',
+                display: 'flex', alignItems: 'center',
+                flexShrink: 0
+              }}>{item.icon}</span>
               <div>
                 <p style={{
                   fontSize: '10px', color: '#B0A0A0',

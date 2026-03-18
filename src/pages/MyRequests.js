@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
 import logoIcon from '../logo-icon.png';
+import { Home, ClipboardList, User } from 'lucide-react';
 
 export default function MyRequests({ user }) {
   const navigate = useNavigate();
@@ -336,9 +337,9 @@ export default function MyRequests({ user }) {
         boxShadow: '0 -4px 24px rgba(0,0,0,0.06)'
       }}>
         {[
-          { icon: '🏠', label: 'Home', path: '/' },
-          { icon: '📋', label: 'Requests', path: '/my-requests' },
-          { icon: '👤', label: 'Profile', path: '/profile' }
+          { icon: <Home size={22} strokeWidth={2}/>, label: 'Home', path: '/' },
+          { icon: <ClipboardList size={22} strokeWidth={2}/>, label: 'Requests', path: '/my-requests' },
+          { icon: <User size={22} strokeWidth={2}/>, label: 'Profile', path: '/profile' }
         ].map(item => {
           const active = window.location.pathname === item.path;
           return (
@@ -351,7 +352,10 @@ export default function MyRequests({ user }) {
                 gap: '3px', padding: '6px 20px', borderRadius: '12px'
               }}
             >
-              <span style={{ fontSize: '20px' }}>{item.icon}</span>
+              <span style={{
+                color: active ? 'var(--maroon)' : '#C0B0B0',
+                display: 'flex', alignItems: 'center'
+              }}>{item.icon}</span>
               <span style={{
                 fontSize: '10px', fontWeight: '700',
                 color: active ? 'var(--maroon)' : '#C0B0B0',

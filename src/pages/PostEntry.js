@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
 import logoIcon from '../logo-icon.png';
+import { MapPin, ShoppingBag } from 'lucide-react';
 
 export default function PostEntry({ user }) {
   const [location, setLocation] = useState('');
@@ -36,9 +37,9 @@ export default function PostEntry({ user }) {
     navigate('/');
   };
 
-  const fields = [
+const fields = [
     {
-      icon: '📍',
+      icon: <MapPin size={16} strokeWidth={2}/>,
       label: 'Where are you going?',
       placeholder: 'e.g. 7/11 Katipunan, Jollibee SM North',
       value: location,
@@ -46,7 +47,7 @@ export default function PostEntry({ user }) {
       hint: "Be specific so pasabuyers know where you're headed"
     },
     {
-      icon: '🛍️',
+      icon: <ShoppingBag size={16} strokeWidth={2}/>,
       label: 'What can you buy?',
       placeholder: 'e.g. Snacks, drinks, food, medicines',
       value: whatCanBuy,
@@ -197,7 +198,9 @@ export default function PostEntry({ user }) {
               letterSpacing: '1px',
               marginBottom: '8px'
             }}>
-              <span>{field.icon}</span>
+              <span style={{ color: 'var(--maroon)', display: 'flex', alignItems: 'center' }}>
+                {field.icon}
+              </span>
               {field.label}
             </label>
             <input

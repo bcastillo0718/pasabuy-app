@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
 import logoIcon from '../logo-icon.png';
+import { Home, ClipboardList, User } from 'lucide-react';
+import { Home, ClipboardList, User, Mail, GraduationCap, Calendar, Smartphone } from 'lucide-react';
 
 export default function Profile({ user, onUpdate }) {
   const navigate = useNavigate();
@@ -241,8 +243,8 @@ export default function Profile({ user, onUpdate }) {
                 borderRadius: '10px',
                 display: 'flex', alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '18px'
-              }}>📱</div>
+                color: 'var(--maroon)'
+              }}><Smartphone size={18} strokeWidth={2}/></div>
               <div>
                 <p style={{
                   fontSize: '10px', color: '#B0A0A0',
@@ -328,9 +330,9 @@ export default function Profile({ user, onUpdate }) {
           border: '1px solid #F0E8E8'
         }}>
           {[
-            { icon: '📧', label: 'Email', value: user.email },
-            { icon: '🎓', label: 'Account Type', value: 'Regular User' },
-            { icon: '📅', label: 'Member Since', value: new Date(user.created_at).toLocaleDateString('en-PH', { month: 'long', year: 'numeric' }) }
+            { icon: <Mail size={16} strokeWidth={2}/>, label: 'Email', value: user.email },
+            { icon: <GraduationCap size={16} strokeWidth={2}/>, label: 'Account Type', value: 'Regular User' },
+            { icon: <Calendar size={16} strokeWidth={2}/>, label: 'Member Since', value: new Date(user.created_at).toLocaleDateString('en-PH', { month: 'long', year: 'numeric' }) }
           ].map((item, i) => (
             <div key={i} style={{
               display: 'flex', alignItems: 'center',
@@ -345,7 +347,8 @@ export default function Profile({ user, onUpdate }) {
                 borderRadius: '9px',
                 display: 'flex', alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '16px', flexShrink: 0
+                flexShrink: 0,
+                color: 'var(--maroon)'
               }}>{item.icon}</div>
               <div>
                 <p style={{
@@ -448,9 +451,9 @@ export default function Profile({ user, onUpdate }) {
         boxShadow: '0 -4px 24px rgba(0,0,0,0.06)'
       }}>
         {[
-          { icon: '🏠', label: 'Home', path: '/' },
-          { icon: '📋', label: 'Requests', path: '/my-requests' },
-          { icon: '👤', label: 'Profile', path: '/profile' }
+          { icon: <Home size={22} strokeWidth={2}/>, label: 'Home', path: '/' },
+          { icon: <ClipboardList size={22} strokeWidth={2}/>, label: 'Requests', path: '/my-requests' },
+          { icon: <User size={22} strokeWidth={2}/>, label: 'Profile', path: '/profile' }
         ].map(item => {
           const active = window.location.pathname === item.path;
           return (
@@ -463,7 +466,10 @@ export default function Profile({ user, onUpdate }) {
                 gap: '3px', padding: '6px 20px', borderRadius: '12px'
               }}
             >
-              <span style={{ fontSize: '20px' }}>{item.icon}</span>
+              <span style={{
+                color: active ? 'var(--maroon)' : '#C0B0B0',
+                display: 'flex', alignItems: 'center'
+              }}>{item.icon}</span>
               <span style={{
                 fontSize: '10px', fontWeight: '700',
                 color: active ? 'var(--maroon)' : '#C0B0B0',
