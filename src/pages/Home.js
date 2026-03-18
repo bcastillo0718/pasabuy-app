@@ -23,7 +23,7 @@ export default function Home({ user }) {
   const fetchEntries = async () => {
     const { data } = await supabase
       .from('entries')
-      .select('*, users(name, photo_url)')
+      .select('*, users(name, photo_url, avg_rating, total_ratings)')
       .eq('status', 'active')
       .order('created_at', { ascending: false });
     setEntries(data || []);
@@ -288,10 +288,21 @@ export default function Home({ user }) {
                   fontWeight: '700', fontSize: '14px',
                   color: 'var(--text)'
                 }}>{entry.users?.name}</p>
-                <p style={{
-                  color: 'var(--text-soft)',
-                  fontSize: '11px', marginTop: '1px'
-                }}>{formatTime(entry.created_at)}</p>
+                <div style={{
+                  display: 'flex', alignItems: 'center',
+                  gap: '6px', marginTop: '2px'
+                }}>
+                  <p style={{
+                    color: 'var(--text-soft)',
+                    fontSize: '11px'
+                  }}>{formatTime(entry.created_at)}</p>
+                  {entry.users?.avg_rating > 0 && (
+                    <span style={{
+                      fontSize: '11px', fontWeight: '700',
+                      color: '#D97706'
+                    }}>⭐ {entry.users?.avg_rating}</span>
+                  )}
+                </div>
               </div>
               <span style={{
                 background: '#F0FDF4',

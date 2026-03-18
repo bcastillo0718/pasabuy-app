@@ -262,7 +262,7 @@ const handleSubmitRating = async () => {
 
   console.log('Submitting rating:', { requestId, raterId: user.id, ratedId, rating });
 
-  const { data, error } = await supabase.from('ratings').insert({
+  const { data } = await supabase.from('ratings').insert({
     request_id: requestId,
     rater_id: user.id,
     rated_id: ratedId,
