@@ -143,6 +143,30 @@ export default function Profile({ user, onUpdate }) {
             color: 'rgba(255,255,255,0.5)',
             fontSize: '13px', marginTop: '3px'
           }}>{user.email}</p>
+          <div style={{
+            display: 'flex', alignItems: 'center',
+            justifyContent: 'center', gap: '6px',
+            marginTop: '8px'
+          }}>
+            {user.avg_rating > 0 ? (
+              <>
+                <span style={{ fontSize: '14px' }}>⭐</span>
+                <span style={{
+                  color: 'var(--yellow)', fontSize: '15px',
+                  fontWeight: '800'
+                }}>{user.avg_rating}</span>
+                <span style={{
+                  color: 'rgba(255,255,255,0.4)',
+                  fontSize: '12px'
+                }}>({user.total_ratings} {user.total_ratings === 1 ? 'rating' : 'ratings'})</span>
+              </>
+            ) : (
+              <span style={{
+                color: 'rgba(255,255,255,0.3)',
+                fontSize: '12px'
+              }}>No ratings yet</span>
+            )}
+          </div>
         </div>
       </div>
 
