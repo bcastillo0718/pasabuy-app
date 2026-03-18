@@ -32,7 +32,9 @@ export default function ProfileSetup({ session, onComplete }) {
         photo_url: session.user.user_metadata.avatar_url,
         membership_status: 'inactive',
         strikes: 0,
-        account_status: 'active'
+        account_status: 'active',
+        agreed_to_terms: true,
+        agreed_at: new Date().toISOString()
       })
       .select()
       .single();
