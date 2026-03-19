@@ -998,6 +998,17 @@ const fetchSupportMessages = async (userId) => {
                       </div>
                     ))}
                   </div>
+                    <button
+                    onClick={() => window.open(`/chat/${req.id}`, '_blank')}
+                    style={{
+                      width: '100%', padding: '9px', borderRadius: '10px',
+                      background: '#F5F3FF', color: '#7C3AED',
+                      border: '1.5px solid #DDD6FE',
+                      fontSize: '12px', fontWeight: '700',
+                      marginBottom: '8px'
+                    }}
+                  >💬 View Chat</button>
+                    
 
                   {req.status !== 'completed' && req.status !== 'cancelled' && (
                     <button
