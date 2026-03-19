@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import logoIcon from '../logo-icon.png';
 
@@ -7,6 +7,23 @@ export default function Suspended({ user }) {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
+  const [existingAppeal, setExistingAppeal] = useState(null);
+  const [checkingAppeal, setCheckingAppeal] = useState(true);
+
+  useEffect(() => {
+    const checkAppeal = async () => {
+      const { data } = await supabase
+        .from('appeals')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+      setExistingAppeal(data);
+      setCheckingAppeal(false);
+    };
+    checkAppeal();
+  }, [user.id]);
 
   const handleAppeal = async () => {
     if (!reason.trim()) return;
@@ -109,11 +126,66 @@ export default function Suspended({ user }) {
           margin: '0 auto 24px'
         }}/>
 
-        {submitted ? (
-          <div style={{
-            textAlign: 'center', padding: '32px 24px'
-          }}>
-            <div style={{ fontSize: '48px', marginBottom: '16px' }}>✅</div>
+        {checkingAppeal ? (
+          <div style={{ textAlign: 'center', padding: '40px' }}>
+            <p style={{ color: '#B0A0A0', fontSize: '14px' }}>Loading...</p>
+          </div>
+        ) : existingAppeal?.status === 'rejected' ? (
+          <div style={{ textAlign: 'center', padding: '32px 24px' }}>
+            <div style={{ fontSize: '48px', marginBottom: '16px' }}>❌</div>
+            <h3 style={{
+              fontFamily: 'Raleway, sans-serif',
+              fontSize: '18px', fontWeight: '800',
+              color: 'var(--text)', marginBottom: '8px'
+            }}>Appeal Rejected</h3>
+            <p style={{
+              color: 'var(--text-soft)', fontSize: '13px',
+              lineHeight: '1.6', marginBottom: '24px'
+            }}>
+              Unfortunately your appeal has been rejected.
+              If you believe this is a mistake, please contact support.
+            </p>
+            <button
+              onClick={handleLogout}
+              style={{
+                width: '100%', padding: '14px',
+                borderRadius: '14px',
+                background: '#FEF2F2', color: '#DC2626',
+                border: '1px solid #FECACA',
+                fontSize: '14px', fontWeight: '700'
+              }}
+            >Log Out</button>
+          </div>
+        ) : existingAppeal?.status === 'approved' ? (
+          <div style={{ textAlign: 'center', padding: '32px 24px' }}>
+            <div style={{ fontSize: '48px', marginBottom: '16px' }}>🎉</div>
+            <h3 style={{
+              fontFamily: 'Raleway, sans-serif',
+              fontSize: '18px', fontWeight: '800',
+              color: 'var(--text)', marginBottom: '8px'
+            }}>Appeal Approved!</h3>
+            <p style={{
+              color: 'var(--text-soft)', fontSize: '13px',
+              lineHeight: '1.6', marginBottom: '24px'
+            }}>
+              Your appeal has been approved and your account has been reactivated.
+              Please log out and log back in to continue using PasaBuy.
+            </p>
+            <button
+              onClick={handleLogout}
+              style={{
+                width: '100%', padding: '14px',
+                borderRadius: '14px',
+                background: 'var(--maroon)', color: 'white',
+                fontSize: '14px', fontWeight: '800',
+                boxShadow: 'var(--shadow-maroon)',
+                marginBottom: '12px'
+              }}
+            >Log Out & Log Back In</button>
+          </div>
+        ) : existingAppeal?.status === 'pending' || submitted ? (
+          <div style={{ textAlign: 'center', padding: '32px 24px' }}>
+            <div style={{ fontSize: '48px', marginBottom: '16px' }}>⏳</div>
             <h3 style={{
               fontFamily: 'Raleway, sans-serif',
               fontSize: '18px', fontWeight: '800',
