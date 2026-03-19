@@ -18,6 +18,7 @@ import AdminPanel from './pages/AdminPanel';
 import Leaderboard from './pages/Leaderboard';
 import FAQ from './pages/FAQ';
 import Support from './pages/Support';
+import Suspended from './pages/Suspended';
 
 const ADMIN_EMAIL = 'bucastillo@up.edu.ph'; // 🔴 CHANGE THIS TO YOUR EMAIL
 
@@ -53,10 +54,8 @@ function App() {
       .single();
 
     if (data?.account_status === 'suspended') {
-      await supabase.auth.signOut();
-      setUser(null);
+      setUser(data);
       setLoading(false);
-      alert('Your account has been suspended. Please contact support.');
       return;
     }
 
@@ -160,6 +159,11 @@ if (loading) return (
           />
         )}
 
+        {/* Suspended account */}
+        {session && user && user.account_status === 'suspended' && (
+          <Route path="*" element={<Suspended user={user} />} />
+        )}
+        
         {/* Logged in, has profile, is admin */}
         {session && user && user.email === ADMIN_EMAIL && (
           <>

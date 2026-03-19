@@ -17,7 +17,9 @@ export default function AdminPanel({ user }) {
   const [adminReply, setAdminReply] = useState('');
   const [sendingReply, setSendingReply] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [appeals, setAppeals] = useState([]);
   const [disputeNote, setDisputeNote] = useState({});
+  
 
   useEffect(() => {
     fetchAll();
@@ -25,12 +27,13 @@ export default function AdminPanel({ user }) {
 
   const fetchAll = async () => {
     setLoading(true);
-    const [usersRes, requestsRes, entriesRes, disputesRes, supportRes] = await Promise.all([
+    const [usersRes, requestsRes, entriesRes, disputesRes, supportRes, appealsRes] = await Promise.all([
       supabase.from('users').select('*').order('created_at', { ascending: false }),
       supabase.from('requests').select('*, entries(location, buyer_id, users(name, photo_url, phone)), pasabuyer:users!requests_pasabuyer_id_fkey(name, phone, photo_url)').order('created_at', { ascending: false }),
       supabase.from('entries').select('*, users(name, photo_url)').order('created_at', { ascending: false }),
       supabase.from('disputes').select('*, raised_by_user:users!disputes_raised_by_fkey(name, photo_url), requests(item_name, total_amount, entries(location))').order('created_at', { ascending: false }),
-      supabase.from('support_messages').select('*, users(name, photo_url)').order('created_at', { ascending: false })
+      supabase.from('support_messages').select('*, users(name, photo_url)').order('created_at', { ascending: false }),
+      supabase.from('appeals').select('*, users(name, photo_url, strikes)').eq('status', 'pending').order('created_at', { ascending: false })
     ]);
 
     const allUsers = usersRes.data || [];
@@ -75,6 +78,7 @@ export default function AdminPanel({ user }) {
       suspended: allUsers.filter(u => u.account_status === 'suspended').length,
     });
 
+    setAppeals(appealsRes.data || []);
     setLoading(false);
   };
 const handleMarkCompleted = async (requestId) => {
@@ -182,6 +186,21 @@ const fetchSupportMessages = async (userId) => {
     fetchAll();
   };
 
+const handleResolveAppeal = async (appealId, userId, approve) => {
+    await supabase.from('appeals').update({
+      status: approve ? 'approved' : 'rejected'
+    }).eq('id', appealId);
+
+    if (approve) {
+      await supabase.from('users').update({
+        account_status: 'active',
+        strikes: 0
+      }).eq('id', userId);
+    }
+
+    fetchAll();
+  };
+
   const handleCancelRequest = async (requestId) => {
     await supabase.from('requests').update({ status: 'cancelled' }).eq('id', requestId);
     fetchAll();
@@ -216,6 +235,7 @@ const fetchSupportMessages = async (userId) => {
     { key: 'dashboard', label: '📊 Dashboard' },
     { key: 'proofs', label: `📦 Proofs${stats.pendingProofReview > 0 ? ` (${stats.pendingProofReview})` : ''}` },
     { key: 'disputes', label: `🚨 Disputes${stats.openDisputes > 0 ? ` (${stats.openDisputes})` : ''}` },
+    { key: 'appeals', label: `📩 Appeals${appeals.length > 0 ? ` (${appeals.length})` : ''}` },
     { key: 'support', label: '🎧 Support' },
     { key: 'users', label: '👥 Users' },
     { key: 'requests', label: '📋 Requests' },
@@ -670,6 +690,99 @@ const fetchSupportMessages = async (userId) => {
                     </div>
                   </div>
                 )}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* APPEALS TAB */}
+        {activeTab === 'appeals' && (
+          <div>
+            <h2 style={{
+              fontFamily: 'Raleway, sans-serif',
+              fontSize: '22px', fontWeight: '800',
+              color: 'var(--text)', marginBottom: '6px'
+            }}>📩 Appeals</h2>
+            <p style={{
+              color: '#888', fontSize: '13px', marginBottom: '20px'
+            }}>Review and resolve account suspension appeals.</p>
+
+            {appeals.length === 0 && (
+              <div style={{
+                textAlign: 'center', padding: '48px',
+                background: 'white', borderRadius: '20px',
+                border: '1.5px dashed #EDE5E5'
+              }}>
+                <div style={{ fontSize: '48px', marginBottom: '12px' }}>📭</div>
+                <p style={{ color: '#888', fontSize: '14px' }}>No pending appeals</p>
+              </div>
+            )}
+
+            {appeals.map(appeal => (
+              <div key={appeal.id} style={{
+                background: 'white', borderRadius: '20px',
+                padding: '20px', marginBottom: '16px',
+                border: '1.5px solid #FECACA',
+                boxShadow: '0 2px 12px rgba(0,0,0,0.06)'
+              }}>
+                <div style={{
+                  display: 'flex', alignItems: 'center',
+                  gap: '12px', marginBottom: '14px'
+                }}>
+                  <img src={appeal.users?.photo_url} alt=""
+                    style={{
+                      width: '44px', height: '44px',
+                      borderRadius: '50%', border: '2px solid #EDE5E5'
+                    }}
+                  />
+                  <div style={{ flex: 1 }}>
+                    <p style={{ fontSize: '14px', fontWeight: '700', color: 'var(--text)' }}>
+                      {appeal.users?.name}
+                    </p>
+                    <p style={{ fontSize: '12px', color: '#DC2626', fontWeight: '600' }}>
+                      🚫 Suspended · {appeal.users?.strikes}/3 Strikes
+                    </p>
+                    <p style={{ fontSize: '11px', color: '#B0A0A0' }}>
+                      {formatDateTime(appeal.created_at)}
+                    </p>
+                  </div>
+                </div>
+
+                <div style={{
+                  background: '#FEF2F2', border: '1px solid #FECACA',
+                  borderRadius: '12px', padding: '12px 14px',
+                  marginBottom: '14px'
+                }}>
+                  <p style={{
+                    fontSize: '11px', color: '#DC2626', fontWeight: '700',
+                    textTransform: 'uppercase', letterSpacing: '0.5px',
+                    marginBottom: '6px'
+                  }}>Appeal Reason</p>
+                  <p style={{
+                    fontSize: '13px', color: '#7A1A1A', lineHeight: '1.6'
+                  }}>{appeal.reason}</p>
+                </div>
+
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button
+                    onClick={() => handleResolveAppeal(appeal.id, appeal.user_id, false)}
+                    style={{
+                      flex: 1, padding: '11px', borderRadius: '10px',
+                      background: '#FEF2F2', color: '#DC2626',
+                      border: '1.5px solid #FECACA',
+                      fontSize: '12px', fontWeight: '700'
+                    }}
+                  >✕ Reject Appeal</button>
+                  <button
+                    onClick={() => handleResolveAppeal(appeal.id, appeal.user_id, true)}
+                    style={{
+                      flex: 1, padding: '11px', borderRadius: '10px',
+                      background: '#F0FDF4', color: '#16A34A',
+                      border: '1.5px solid #BBF7D0',
+                      fontSize: '12px', fontWeight: '700'
+                    }}
+                  >✓ Approve & Reactivate</button>
+                </div>
               </div>
             ))}
           </div>
