@@ -153,7 +153,11 @@ if (loading) return (
 
         {/* Logged in, has profile, is admin */}
         {session && user && user.email === ADMIN_EMAIL && (
-          <Route path="*" element={<AdminPanel user={user} />} />
+          <>
+            <Route path="/" element={<AdminPanel user={user} />} />
+            <Route path="/chat/:requestId" element={<Chat user={user} />} />
+            <Route path="*" element={<AdminPanel user={user} />} />
+          </>
         )}
 
         {/* Logged in, active member, regular user - membership disabled for trial */}
