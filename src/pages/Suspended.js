@@ -107,7 +107,7 @@ export default function Suspended({ user }) {
           color: 'rgba(255,255,255,0.55)',
           fontSize: '13px', lineHeight: '1.6'
         }}>
-          Your account has been suspended due to a violation of PasaBuy's community rules.
+          Your account has been suspended due to your violation of PasaBuy App's Community Rules.
           You may submit an appeal below and we will review your case.
         </p>
       </div>
@@ -169,7 +169,7 @@ export default function Suspended({ user }) {
               lineHeight: '1.6', marginBottom: '24px'
             }}>
               Your appeal has been approved and your account has been reactivated.
-              Please log out and log back in to continue using PasaBuy.
+              Please log out and log back in to continue using PasaBuy App.
             </p>
             <button
               onClick={handleLogout}
