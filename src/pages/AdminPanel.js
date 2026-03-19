@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import logoIcon from '../logo-icon.png';
+import { useNavigate } from 'react-router-dom';
 
 export default function AdminPanel({ user }) {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [stats, setStats] = useState({});
   const [users, setUsers] = useState([]);
@@ -999,7 +1001,7 @@ const fetchSupportMessages = async (userId) => {
                     ))}
                   </div>
                     <button
-                    onClick={() => window.open(`/chat/${req.id}`, '_blank')}
+                    onClick={() => navigate(`/chat/${req.id}`, '_blank')}
                     style={{
                       width: '100%', padding: '9px', borderRadius: '10px',
                       background: '#F5F3FF', color: '#7C3AED',
