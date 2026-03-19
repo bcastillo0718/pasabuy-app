@@ -143,7 +143,7 @@ export default function Suspended({ user }) {
               lineHeight: '1.6', marginBottom: '24px'
             }}>
               Unfortunately your appeal has been rejected.
-              If you believe this is a mistake, please contact support.
+              If you believe this is a mistake, please contact the admin by sending an email to pasabuy.app.earn@gmail.com.
             </p>
             <button
               onClick={handleLogout}
