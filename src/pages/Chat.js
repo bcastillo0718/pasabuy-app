@@ -26,6 +26,7 @@ const [ratingComment, setRatingComment] = useState('');
 const [hasRated, setHasRated] = useState(false);
 const [submittingRating, setSubmittingRating] = useState(false);
 const [canCancel, setCanCancel] = useState(false);
+const [viewingPhoto, setViewingPhoto] = useState(null);
   const bottomRef = useRef(null);
   const receiptInputRef = useRef(null);
   const proofInputRef = useRef(null);
@@ -483,9 +484,10 @@ await supabase.from('ratings').insert({
       }}>📄 GCash Receipt</p>
       <img
         src={photoUrl} alt="GCash Receipt"
+        onClick={() => setViewingPhoto(photoUrl)}
         style={{
-          width: '100%', maxHeight: '200px',
-          objectFit: 'cover', borderRadius: '8px'
+          width: '100%', borderRadius: '8px',
+          cursor: 'pointer'
         }}
       />
       <p style={{
@@ -518,9 +520,10 @@ await supabase.from('ratings').insert({
                   }}>📦 Proof of Delivery</p>
                   <img
                     src={photoUrl} alt="Proof of delivery"
+                    onClick={() => setViewingPhoto(photoUrl)}
                     style={{
-                      width: '100%', maxHeight: '200px',
-                      objectFit: 'cover', borderRadius: '8px'
+                      width: '100%', borderRadius: '8px',
+                      cursor: 'pointer'
                     }}
                   />
                   <p style={{
@@ -713,6 +716,22 @@ await supabase.from('ratings').insert({
                 fontSize: '13px', fontWeight: '700', marginBottom: '6px'
               }}
             >🚨 Raise a Dispute</button>
+          )}
+
+          {/* Buyer: Raise Dispute for suspicious receipt */}
+          {isBuyer &&
+            request?.payment_status === 'paid' &&
+            request?.status !== 'completed' &&
+            request?.status !== 'disputed' && (
+            <button
+              onClick={() => setShowDisputeModal(true)}
+              style={{
+                width: '100%', padding: '11px', borderRadius: '11px',
+                background: '#FEF2F2', color: '#DC2626',
+                border: '1px solid #FECACA',
+                fontSize: '13px', fontWeight: '700', marginBottom: '6px'
+              }}
+            >🚨 Raise Dispute</button>
           )}
 
           {/* I Received It */}
@@ -1127,6 +1146,31 @@ await supabase.from('ratings').insert({
               >{submittingRating ? '⏳ Submitting...' : 'Submit Rating'}</button>
             </div>
           </div>
+        </div>
+      )}
+
+    {viewingPhoto && (
+        <div
+          onClick={() => setViewingPhoto(null)}
+          style={{
+            position: 'fixed', inset: 0,
+            background: 'rgba(0,0,0,0.9)',
+            display: 'flex', alignItems: 'center',
+            justifyContent: 'center', zIndex: 999,
+            padding: '20px'
+          }}
+        >
+          <img src={viewingPhoto} alt="Full view"
+            style={{
+              maxWidth: '100%', maxHeight: '90vh',
+              borderRadius: '12px', objectFit: 'contain'
+            }}
+          />
+          <p style={{
+            position: 'absolute', bottom: '30px',
+            color: 'rgba(255,255,255,0.5)',
+            fontSize: '12px'
+          }}>Tap anywhere to close</p>
         </div>
       )}
     </div>
