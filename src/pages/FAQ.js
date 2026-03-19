@@ -81,9 +81,9 @@ const faqs = [
   {
     category: 'App Usage',
     items: [
-      { q: 'How do I contact the admin?', a: 'You can reach the admin through the Helpdesk feature in the app or by raising a dispute if it\'s transaction-related.' },
+      { q: 'How do I contact the admin?', a: 'You can reach the admin through the Chat Support or by raising a dispute if it\'s transaction-related.' },
       { q: 'What are the operating hours for support?', a: 'Support is available daily from 8AM to 10PM.' },
-      { q: 'How do I report a suspicious user?', a: 'Raise a dispute or contact the admin through the Helpdesk with the user\'s name and details of your concern.' },
+      { q: 'How do I report a suspicious user?', a: 'Raise a dispute or contact the admin through the Chat Support with the user\'s name and details of your concern.' },
     ]
   },
   {
