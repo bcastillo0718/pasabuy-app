@@ -14,17 +14,19 @@ export default function Support({ user }) {
   const photoInputRef = useRef(null);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
+// eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     fetchMessages();
 
     const channel = supabase
       .channel(`support-${user.id}`)
       .on('postgres_changes', {
-        event: 'INSERT', schema: 'public', table: 'support_messages',
-        filter: `user_id=eq.${user.id}`
+        event: 'INSERT', schema: 'public', table: 'support_messages'
       }, (payload) => {
-        setMessages(prev => [...prev, payload.new]);
-        setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
+        if (payload.new.user_id === user.id) {
+          setMessages(prev => [...prev, payload.new]);
+          setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
+        }
       })
       .subscribe();
 
