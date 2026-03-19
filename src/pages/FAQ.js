@@ -73,7 +73,7 @@ const faqs = [
     category: 'Account & Safety',
     items: [
       { q: 'Is my GCash number safe?', a: 'Your GCash number is only used for receiving your earnings and is not shared publicly. Only the admin can see it for payment purposes.' },
-      { q: 'What happens if I get a strike?', a: 'Strikes are given for violations of PasaBuy\'s rules. After 3 strikes your account will be automatically suspended.' },
+      { q: 'What happens if I get a strike?', a: 'Strikes are given for violations of PasaBuy App\'s rules. After 3 strikes your account will be automatically suspended.' },
       { q: 'Why was my account suspended?', a: 'Accounts are suspended for violations such as providing fake information, not fulfilling accepted requests, or receiving 3 strikes. Contact the admin for appeals.' },
       { q: 'How do I update my GCash number?', a: 'Go to your Profile page and tap "Edit" next to your GCash number to update it.' },
     ]

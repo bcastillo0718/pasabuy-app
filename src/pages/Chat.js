@@ -207,10 +207,16 @@ const checkIfRated = async () => {
       }).eq('id', requestId);
 
       await supabase.from('messages').insert({
-        request_id: requestId,
-        sender_id: user.id,
-        text: `✅ Payment verified! The buyer will now purchase your pasabuy.`
-      });
+  request_id: requestId,
+  sender_id: user.id,
+  text: `📄 RECEIPT[photo]${imageUrl}`
+});
+
+await supabase.from('messages').insert({
+  request_id: requestId,
+  sender_id: user.id,
+  text: `✅ Payment verified! For the Buyer, please review also the receipt above before purchasing.`
+});
 
       fetchRequest();
     } catch (err) {
@@ -460,6 +466,40 @@ await supabase.from('ratings').insert({
             if (msg.text?.startsWith('💸 PAYMENT RELEASED') && !isBuyer) {
               return null;
             }
+
+            if (msg.text?.startsWith('📄 RECEIPT')) {
+  const photoUrl = msg.text.split('[photo]')[1];
+  return (
+    <div key={msg.id} style={{
+      background: '#F0FDF4',
+      border: '1px solid #BBF7D0',
+      borderRadius: '14px', padding: '12px',
+      textAlign: 'center'
+    }}>
+      <p style={{
+        fontSize: '11px', fontWeight: '700',
+        color: '#16A34A', marginBottom: '8px',
+        textTransform: 'uppercase', letterSpacing: '0.5px'
+      }}>📄 GCash Receipt</p>
+      <img
+        src={photoUrl} alt="GCash Receipt"
+        style={{
+          width: '100%', maxHeight: '200px',
+          objectFit: 'cover', borderRadius: '8px'
+        }}
+      />
+      <p style={{
+        fontSize: '11px', color: '#16A34A',
+        marginTop: '8px', fontWeight: '500',
+        lineHeight: '1.5'
+      }}>Please verify this receipt before purchasing. If you think that the receipt is fake/manipulated, you may raise a dispute.</p>
+      <p style={{
+        fontSize: '10px', color: '#888',
+        marginTop: '4px'
+      }}>{formatTime(msg.created_at)}</p>
+    </div>
+  );
+}
 
             // Proof of delivery
             if (msg.text?.startsWith('📦 PROOF OF DELIVERY')) {
