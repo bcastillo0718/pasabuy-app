@@ -127,7 +127,7 @@ export default function Support({ user }) {
           <div style={{ flex: 1, minWidth: 0 }}>
             <p style={{
               color: 'white', fontSize: '14px', fontWeight: '700'
-            }}>PasaBuy Support</p>
+            }}>PasaBuy App Chat Support</p>
             <p style={{
               color: 'rgba(255,255,255,0.5)',
               fontSize: '11px', marginTop: '1px'

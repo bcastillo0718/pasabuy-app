@@ -191,7 +191,7 @@ export default function FAQ({ user }) {
         <p style={{
           color: 'rgba(255,255,255,0.5)',
           fontSize: '13px', marginTop: '4px'
-        }}>Frequently asked questions</p>
+        }}>Frequently Asked Questions</p>
       </div>
 
       {/* White card */}
