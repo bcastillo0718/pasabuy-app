@@ -163,7 +163,7 @@ if (loading) return (
         {session && user && user.account_status === 'suspended' && (
           <Route path="*" element={<Suspended user={user} />} />
         )}
-        
+
         {/* Logged in, has profile, is admin */}
         {session && user && user.email === ADMIN_EMAIL && (
           <>
@@ -174,7 +174,7 @@ if (loading) return (
         )}
 
         {/* Logged in, active member, regular user - membership disabled for trial */}
-{session && user && user.email !== ADMIN_EMAIL && (
+        {session && user && user.email !== ADMIN_EMAIL && user.account_status !== 'suspended' && (
           <>
             <Route path="/" element={<Home user={user} />} />
             <Route path="/post-entry" element={<PostEntry user={user} />} />
