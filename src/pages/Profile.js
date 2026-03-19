@@ -285,6 +285,43 @@ export default function Profile({ user, onUpdate }) {
           </div>
         )}  
 
+        {/* Strikes warning */}
+        {user.strikes > 0 && (
+          <div style={{
+            background: user.strikes >= 2 ? '#FEF2F2' : '#FFF8E8',
+            border: `1px solid ${user.strikes >= 2 ? '#FECACA' : '#FDE68A'}`,
+            borderRadius: '16px',
+            padding: '14px 16px',
+            marginBottom: '10px',
+            display: 'flex', alignItems: 'center', gap: '12px'
+          }}>
+            <div style={{
+              width: '36px', height: '36px',
+              background: user.strikes >= 2 ? '#FEF2F2' : '#FFF8E8',
+              borderRadius: '10px',
+              display: 'flex', alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '18px', flexShrink: 0
+            }}>⚠️</div>
+            <div>
+              <p style={{
+                fontSize: '13px', fontWeight: '700',
+                color: user.strikes >= 2 ? '#DC2626' : '#D97706'
+              }}>
+                {user.strikes}/3 Strikes
+              </p>
+              <p style={{
+                fontSize: '11px', color: user.strikes >= 2 ? '#DC2626' : '#92400E',
+                marginTop: '2px', lineHeight: '1.5'
+              }}>
+                {user.strikes >= 2
+                  ? 'Warning: One more strike will suspend your account!'
+                  : 'You have received a strike for violating community rules.'}
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* GCash Number */}
         <div style={{
           background: '#FAFAFA',

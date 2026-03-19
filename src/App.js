@@ -51,6 +51,15 @@ function App() {
       .select('*')
       .eq('id', id)
       .single();
+
+    if (data?.account_status === 'suspended') {
+      await supabase.auth.signOut();
+      setUser(null);
+      setLoading(false);
+      alert('Your account has been suspended. Please contact support.');
+      return;
+    }
+
     setUser(data);
     setLoading(false);
   };
