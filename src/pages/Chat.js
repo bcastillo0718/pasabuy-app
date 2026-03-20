@@ -127,7 +127,7 @@ const checkIfRated = async () => {
   };
 
   const handleSetPrice = async () => {
-    if (!actualPrice || parseFloat(actualPrice) < 50) return;
+    if (!actualPrice || parseFloat(actualPrice) < 40) return;
 
     await supabase.from('requests').update({
       actual_price: parseFloat(actualPrice),
@@ -890,7 +890,7 @@ await supabase.from('ratings').insert({
               type="number" placeholder="e.g. 120"
               value={actualPrice}
               onChange={e => setActualPrice(e.target.value)}
-              min="50"
+              min="40"
               style={{
                 width: '100%', padding: '13px 16px',
                 borderRadius: '13px', border: '1.5px solid #EDE5E5',
@@ -941,15 +941,15 @@ await supabase.from('ratings').insert({
               >Cancel</button>
               <button
                 onClick={handleSetPrice}
-                disabled={!actualPrice || parseFloat(actualPrice) < 50}
+                disabled={!actualPrice || parseFloat(actualPrice) < 40}
                 style={{
                   flex: 2, padding: '13px', borderRadius: '13px',
-                  background: (!actualPrice || parseFloat(actualPrice) < 50)
+                  background: (!actualPrice || parseFloat(actualPrice) < 40)
                     ? '#F0E8E8' : 'var(--maroon)',
-                  color: (!actualPrice || parseFloat(actualPrice) < 50)
+                  color: (!actualPrice || parseFloat(actualPrice) < 40)
                     ? '#C0A8A8' : 'white',
                   fontSize: '14px', fontWeight: '800',
-                  boxShadow: (!actualPrice || parseFloat(actualPrice) < 50)
+                  boxShadow: (!actualPrice || parseFloat(actualPrice) < 40)
                     ? 'none' : 'var(--shadow-maroon)'
                 }}
               >Send Payment Request</button>

@@ -36,6 +36,7 @@ const faqs = [
   {
     category: 'Payment',
     items: [
+     { q: 'Is there a minimum order amount?', a: 'Yes. The minimum order amount is ₱40. The buyer will not be able to set a price below ₱40. This is to ensure that transactions are worthwhile for both parties.' },
       { q: 'How does payment work?', a: 'Once the buyer sets the price, you\'ll receive the total amount to pay in the chat. Send the exact amount via GCash to the number provided, then upload your receipt for verification.' },
       { q: 'What GCash number do I send payment to?', a: 'The GCash number will be provided in the payment request message inside the chat. Make sure to send to the exact number shown.' },
       { q: 'What happens after I send payment?', a: 'Upload your GCash receipt in the chat. Once your payment is verified, the buyer will be notified to purchase and deliver your item.' },

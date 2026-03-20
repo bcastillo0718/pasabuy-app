@@ -57,59 +57,69 @@ const rules = [
     'Any form of harassment, fraud, or misconduct will result in immediate suspension.'
   ]},
   { category: 'For Buyers', items: [
-    'Only post an entry if you are actually going out.',
-    'Once you accept a request, you are obligated to purchase and deliver the item.',
+    'Only post an entry if you are actually going out. Posting fake entries will result in a strike.',
+    'Once you accept a request, you are obligated to purchase and deliver the item. Failure to do so without valid reason will result in a strike.',
     'You must upload a valid proof of delivery before the transaction can be completed.',
-    'Failure to deliver accepted items without valid reason will result in a strike.'
   ]},
   { category: 'For Pasabuyers', items: [
-    'You must pay the exact amount requested within 15 minutes of receiving the payment request. Failure to do this, the buyer will have option to cancel the request',
-    'You must upload a valid GCash receipt as proof of payment.',
-    'Raising false disputes will result in a strike.'
+    'You must pay the exact amount requested within 15 minutes of receiving the payment request. Repeated failure to pay (3 times) will result in a strike.',
+    'You must upload a valid and genuine GCash receipt as proof of payment.',
+    'Raising false disputes will result in a strike.',
   ]},
   { category: 'Payments & Earnings', items: [
     'All payments must be made through GCash only.',
+    'The minimum order amount is ₱40. Orders below this amount will not be accepted.',
     'The 15% commission is non-negotiable and goes directly to the buyer.',
     'Earnings will be released after the admin verifies the proof of delivery.'
   ]},
-  { category: 'Violations & Penalties', items: [
+  { category: 'Violations — Instant Suspension', items: [
+    'Uploading a fake or manipulated GCash receipt will result in immediate account suspension.',
+    'Using PasaBuy App for illegal items or prohibited substances will result in immediate account suspension.',
+    'Creating multiple accounts is strictly prohibited and will result in immediate suspension of all accounts.',
+    'Sharing your account with other users will result in immediate suspension.',
+    'Any form of harassment or threatening behavior in chat will result in immediate suspension.',
+    'Manipulating ratings through fake accounts will result in immediate permanent suspension.',
+  ]},
+  { category: 'Violations — Strike Offenses', items: [
+    'Not delivering an accepted item without valid reason.',
+    'Raising a false dispute.',
+    'Failing to pay within 15 minutes on 3 separate transactions.',
+    'Providing inaccurate profile information.',
+    'Pressuring other users for high ratings.',
+    'Sharing external contact details in chat.',
+    'Posting fake entries without actually going out.',
+  ]},
+  { category: 'Strikes & Suspension', items: [
     'Users who receive 3 strikes will be automatically suspended.',
-    'Suspended accounts may appeal to the admin.',
-    'PasaBuy App reserves the right to suspend accounts without prior notice for serious violations.'
+    'Suspended accounts may submit an appeal for review.',
+    'PasaBuy App reserves the right to suspend accounts without prior notice for serious violations.',
   ]},
   { category: 'Privacy & Safety', items: [
     'Do not share your personal information in the chat.',
-    'Do not use PasaBuy App for illegal items or substances.',
-    'Do not use PasaBuy App for items that are prohibited.',
-    'Your GCash number is only used for receiving earnings and will not be shared publicly.'
+    'Do not use PasaBuy App for items that are prohibited on campus.',
+    'Your GCash number is only used for receiving earnings and will not be shared publicly.',
   ]},
   { category: 'Chat & Communication', items: [
-    'Keep all communication within the PasaBuy App chat only.',
+    'Keep all communication within the PasaBuy Appchat only.',
     'Do not share external contact details in the chat.',
     'Do not send inappropriate, offensive or threatening messages in the chat.',
-    'Screenshots of private conversations used to harass other users will result in suspension.'
+    'Screenshots of private conversations used to harass other users will result in suspension.',
   ]},
   { category: 'Ratings & Reviews', items: [
     'Ratings must be honest and based on actual transaction experience.',
     'Manipulating ratings through fake accounts will result in permanent suspension.',
-    'Do not pressure other users into giving you a high rating.'
-  ]},
-  { category: 'Items & Transactions', items: [
-    'Buyers can only purchase items within their stated location.',
-    'Items must be delivered in the same condition as purchased.',
-    'PasaBuy App is not responsible for damaged or incorrect items unless proven to be the buyer\'s fault.',
-    'Do not use PasaBuy App to resell items at a higher price outside of the 15% commission.'
+    'Do not pressure other users into giving you a high rating.',
   ]},
   { category: 'Account', items: [
-    'Each person is only allowed one PasaBuy App account.',
+    'Each person is only allowed one PasaBuy account.',
     'Sharing accounts with other users is strictly prohibited.',
     'PasaBuy App reserves the right to modify these rules at any time.',
-    'Continued use of the app means you agree to any updated rules.'
+    'Continued use of the app means you agree to any updated rules.',
   ]},
   { category: 'Disclaimer', items: [
     'PasaBuy App is a peer-to-peer errand sharing platform and is not responsible for any loss, damage or disputes arising from transactions between users.',
     'All disputes will be handled fairly by the admin based on available evidence.',
-    'PasaBuy App operates daily from 8AM to 10PM only. Transactions outside these hours are at the users\'s own risk.'
+    'PasaBuy App operates daily from 8AM to 10PM only. Transactions outside these hours are at the users\'s own risk.',
   ]}
 ];
 
