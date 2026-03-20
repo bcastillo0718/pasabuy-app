@@ -436,12 +436,13 @@ const [loading, setLoading] = useState(true);
               {[
                 { icon: <MapPin size={14} strokeWidth={2}/>, label: 'Going to', value: entry.location },
                 { icon: <ShoppingBag size={14} strokeWidth={2}/>, label: 'Can buy', value: entry.what_can_buy },
+                { icon: <MapPin size={14} strokeWidth={2}/>, label: 'Meetup at', value: entry.meetup_location },
               ].map((item, i) => (
                 <div key={i} style={{
                   display: 'flex', gap: '10px',
                   alignItems: 'flex-start',
-                  paddingBottom: i === 0 ? '8px' : '0',
-                  borderBottom: i === 0 ? '1px solid #F0E8E8' : 'none'
+                  paddingBottom: i < 2 ? '8px' : '0',
+                  borderBottom: i < 2 ? '1px solid #F0E8E8' : 'none'
                 }}>
                   <span style={{ 
                     color: 'var(--maroon)',

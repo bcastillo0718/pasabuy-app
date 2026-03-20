@@ -10,10 +10,11 @@ export default function PostEntry({ user }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [selectedDuration, setSelectedDuration] = useState(null);
+  const [meetupLocation, setMeetupLocation] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async () => {
-    if (!location || !whatCanBuy || !selectedDuration) {
+    if (!location || !whatCanBuy || !meetupLocation || !selectedDuration) {
       setError('Please fill in all fields');
       return;
     }
@@ -27,6 +28,7 @@ export default function PostEntry({ user }) {
         location,
         what_can_buy: whatCanBuy,
         status: 'active',
+        meetup_location: meetupLocation,
         expires_at: new Date(Date.now() + selectedDuration * 60000).toISOString()
       });
 
@@ -43,10 +45,10 @@ const fields = [
     {
       icon: <MapPin size={16} strokeWidth={2}/>,
       label: 'Where are you going?',
-      placeholder: 'e.g. 7/11 Grove, McDo Vega',
+      placeholder: 'e.g. 7/11 Katipunan, Jollibee SM North',
       value: location,
       onChange: setLocation,
-      hint: "Be specific as you can so pasabuyers know where you're going"
+      hint: "Be specific so pasabuyers know where you're headed"
     },
     {
       icon: <ShoppingBag size={16} strokeWidth={2}/>,
@@ -56,9 +58,17 @@ const fields = [
       onChange: setWhatCanBuy,
       hint: 'Let pasabuyers know what types of items you can get'
     },
+    {
+      icon: <MapPin size={16} strokeWidth={2}/>,
+      label: 'Meetup / Handover Location',
+      placeholder: 'e.g. Building A lobby, Canteen entrance, Gate 2',
+      value: meetupLocation,
+      onChange: setMeetupLocation,
+      hint: 'Where can the pasabuyer claim the items?'
+    },
   ];
 
-  const isValid = location && whatCanBuy && selectedDuration;
+  const isValid = location && whatCanBuy && meetupLocation && selectedDuration;
 
   return (
     <div style={{
