@@ -15,7 +15,7 @@ const faqs = [
   {
     category: 'For Buyers',
     items: [
-      { q: 'How do I post an entry?', a: 'Tap the "I\'m going out!" button on the home screen, fill in where you\'re going, what you can buy, and how long you\'ll be out, then tap "Post Entry."' },
+      { q: 'How do I post an entry?', a: 'Tap the "I\'m going out!" button on the home screen, fill in where you\'re going, what you can buy, your meetup/handover location, and how long you\'ll be out, then tap "Post Entry."' },
       { q: 'Can I post multiple entries at the same time?', a: 'Yes, you can post multiple entries. However we encourage you to only post when you\'re actually going out to maintain trust in the community.' },
       { q: 'How do I accept or reject a request?', a: 'Go to your entry, scroll down to see the requests, and tap "Accept" or "Reject" on each request card.' },
       { q: 'What happens when my entry expires?', a: 'Your entry will automatically end and no new requests can be submitted. Existing accepted requests and their chats will remain accessible until completed.' },
@@ -31,6 +31,7 @@ const faqs = [
       { q: 'What happens after my request is accepted?', a: 'You\'ll be able to open the chat with the buyer to coordinate. The buyer will then set the item price and send you a payment request.' },
       { q: 'How do I pay for my order?', a: 'Once the buyer sets the price, you\'ll receive the total amount to pay in the chat. Send the exact amount via GCash to the number provided, then upload your receipt for verification.' },
       { q: 'What if I want to cancel my request?', a: 'Currently, you can contact the buyer through chat to coordinate a cancellation. A formal cancel button will be added in a future update.' },
+      { q: 'How will I know where to get my item?', a: 'The buyer sets a meetup or handover location when posting their entry. You can see this on the entry card before requesting, so you can decide if the location is convenient for you.' },
     ]
   },
   {
